@@ -4,11 +4,8 @@ exports[`able to get user profile 1`] = `
 Object {
   "data": Object {
     "Me": Object {
-      "createdAt": "1988-03-01T13:00:00.000Z",
-      "email": "test+user@email.com",
-      "id": "1",
+      "email": "test+user@test.com",
       "name": "Test User",
-      "updatedAt": "1988-03-02T13:00:00.000Z",
     },
   },
   "errors": undefined,
@@ -27,8 +24,7 @@ Object {
     "Login": Object {
       "jwt": "JWT_TOKEN_STRING",
       "user": Object {
-        "email": "test+user@email.com",
-        "id": "1",
+        "email": "test+user@test.com",
         "name": "Test User",
       },
     },
@@ -49,9 +45,8 @@ Object {
     "Signup": Object {
       "jwt": "JWT_TOKEN_STRING",
       "user": Object {
-        "email": "new.user@test.com",
-        "id": "1",
-        "name": "Test User",
+        "email": "new+test+user@test.com",
+        "name": "A new Test User",
       },
     },
   },
@@ -69,8 +64,7 @@ exports[`able to update user password successfully 1`] = `
 Object {
   "data": Object {
     "UpdateUser": Object {
-      "email": "test+user@email.com",
-      "id": "1",
+      "email": "test+user@test.com",
       "name": "Test User",
     },
   },
@@ -88,8 +82,7 @@ exports[`able to update user profile successfully 1`] = `
 Object {
   "data": Object {
     "UpdateUser": Object {
-      "email": "test+user@email.com",
-      "id": "1",
+      "email": "updated+user@test.com",
       "name": "Test User",
     },
   },
@@ -111,6 +104,24 @@ Object {
   "errors": Array [
     [GraphQLError: Password reset token is invalid.],
   ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`signup - validation errors able to update user profile successfully 1`] = `
+Object {
+  "data": Object {
+    "UpdateUser": Object {
+      "email": "updated+user@test.com",
+      "name": "Test User",
+    },
+  },
+  "errors": undefined,
   "extensions": undefined,
   "http": Object {
     "headers": Headers {

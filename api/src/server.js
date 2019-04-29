@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 import jwt from 'express-jwt';
@@ -7,6 +7,9 @@ import { prisma } from '../generated/prisma-client';
 import typeDefs from './schema';
 import resolvers from './resolvers';
 import schemaDirectives from './directives';
+
+const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+dotenv.config({ path: envFile });
 
 const app = express();
 

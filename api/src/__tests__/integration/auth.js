@@ -1,9 +1,13 @@
 import { createTestClient } from 'apollo-server-testing';
 import { ApolloServer } from 'apollo-server-express';
+import dotenv from 'dotenv';
+import { prisma } from '../../../generated/prisma-client';
 import typeDefs from '../../schema';
 import resolvers from '../../resolvers';
 import schemaDirectives from '../../directives';
 import { ME, UPDATE_USER, DELETE_USER } from '../../queries/user';
+
+dotenv.config({ path: '.env.test' });
 
 let client;
 
@@ -12,7 +16,14 @@ beforeAll(async () => {
     typeDefs,
     resolvers,
     schemaDirectives,
-    context: () => ({})
+    context: async ({ req }) => {
+      const user = null;
+
+      return {
+        prisma,
+        user
+      };
+    }
   });
 
   client = createTestClient(server);
