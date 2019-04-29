@@ -1,7 +1,7 @@
 import Layout from '../layouts/main';
 import Link from 'next/link';
 
-function Home() {
+const Home = () => {
   return (
     <Layout>
       <div className="container">
@@ -15,6 +15,6 @@ function Home() {
       </div>
     </Layout>
   );
-}
+};
 
 export default Home;
