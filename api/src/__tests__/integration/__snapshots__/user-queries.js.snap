@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`able to get user profile 1`] = `
+Object {
+  "data": Object {
+    "Me": Object {
+      "createdAt": "1988-03-01T13:00:00.000Z",
+      "email": "test+user@email.com",
+      "id": "1",
+      "name": "Test User",
+      "updatedAt": "1988-03-02T13:00:00.000Z",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`able to login successfully 1`] = `
+Object {
+  "data": Object {
+    "Login": Object {
+      "jwt": "JWT_TOKEN_STRING",
+      "user": Object {
+        "email": "test+user@email.com",
+        "id": "1",
+        "name": "Test User",
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`able to signup successfully 1`] = `
+Object {
+  "data": Object {
+    "Signup": Object {
+      "jwt": "JWT_TOKEN_STRING",
+      "user": Object {
+        "email": "new.user@test.com",
+        "id": "1",
+        "name": "Test User",
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`able to update user password successfully 1`] = `
+Object {
+  "data": Object {
+    "UpdateUser": Object {
+      "email": "test+user@email.com",
+      "id": "1",
+      "name": "Test User",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`able to update user profile successfully 1`] = `
+Object {
+  "data": Object {
+    "UpdateUser": Object {
+      "email": "test+user@email.com",
+      "id": "1",
+      "name": "Test User",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`not able to reset password with wrong token 1`] = `
+Object {
+  "data": Object {
+    "ResetPassword": null,
+  },
+  "errors": Array [
+    [GraphQLError: Password reset token is invalid.],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
