@@ -4,7 +4,7 @@
   "alias": "stage.briefgenius.com",
   "builds": [
     {
-      "src": "./web/next.config.js",
+      "src": "next.config.js",
       "use": "@now/next"
     }
   ],
