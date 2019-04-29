@@ -1,7 +1,8 @@
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 import { createTestClient } from 'apollo-server-testing';
 import { ApolloServer } from 'apollo-server-express';
 import sgMail from '@sendgrid/mail';
-import { prisma } from '../../lib/prisma-mock';
 import typeDefs from '../../schema';
 import resolvers from '../../resolvers';
 import schemaDirectives from '../../directives';
@@ -15,33 +16,43 @@ import {
   DELETE_USER
 } from '../../queries/user';
 
-let server;
+dotenv.config({ path: '.env.test' });
+const { prisma } = require('../../../generated/prisma-client');
+
+let user;
 let client;
 
 beforeEach(async () => {
-  server = await new ApolloServer({
+  await prisma.deleteManyUsers();
+
+  user = await prisma.createUser({
+    id: 'A-HASHED-ID',
+    name: 'Test User',
+    email: 'test+user@test.com',
+    password: bcrypt.hashSync('testpassword', 10),
+    resetPasswordToken: 'RESET-PASSWORD-TOKEN'
+  });
+
+  const server = await new ApolloServer({
     typeDefs,
     resolvers,
     schemaDirectives,
-    context: () => ({
-      prisma
-    })
+    context: async ({ req }) => {
+      return {
+        prisma,
+        user
+      };
+    }
   });
+
   client = createTestClient(server);
 });
 
 it('able to get user profile', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test@user.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: ME
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({ id: 1 });
   expect(res).toMatchSnapshot();
 });
 
@@ -50,13 +61,12 @@ it('able to login successfully', async () => {
     query: LOGIN,
     variables: {
       input: {
-        email: 'test+user@email.com',
+        email: user.email,
         password: 'testpassword'
       }
     }
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({ email: 'test+user@email.com' });
   expect(res).toMatchSnapshot();
 });
 
@@ -65,20 +75,13 @@ it('able to signup successfully', async () => {
     query: SIGNUP,
     variables: {
       input: {
-        name: 'Test User',
-        email: 'new.user@test.com',
+        name: 'A new Test User',
+        email: 'new+test+user@test.com',
         password: 'testpassword'
       }
     }
   });
 
-  expect(prisma.createUser).toHaveBeenCalledWith(
-    expect.objectContaining({
-      name: 'Test User',
-      email: 'new.user@test.com',
-      password: expect.any(String)
-    })
-  );
   expect(res).toMatchSnapshot();
 });
 
@@ -89,8 +92,8 @@ describe('signup - validation errors', () => {
       variables: {
         input: {
           name: '',
-          email: 'test+user@.com',
-          password: ''
+          email: 'dummy+user@testom',
+          password: 'pass'
         }
       }
     });
@@ -108,24 +111,17 @@ describe('signup - validation errors', () => {
       variables: {
         input: {
           name: 'Test User',
-          email: 'test+user@email.com',
+          email: 'test+user@test.com',
           password: 'testpassword'
         }
       }
     });
 
-    expect(prisma.user).toHaveBeenCalledWith({ email: 'test+user@email.com' });
     expect(res.errors[0].message).toBe('Email is already taken');
   });
 });
 
 it('able to update user profile successfully', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test@user.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: UPDATE_USER,
     variables: {
@@ -135,22 +131,10 @@ it('able to update user profile successfully', async () => {
     }
   });
 
-  expect(prisma.updateUser).toHaveBeenCalledWith({
-    where: { id: 1 },
-    data: {
-      email: 'updated+user@test.com'
-    }
-  });
   expect(res).toMatchSnapshot();
 });
 
 it('able to update user password successfully', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test@user.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: UPDATE_USER,
     variables: {
@@ -160,26 +144,11 @@ it('able to update user password successfully', async () => {
     }
   });
 
-  expect(prisma.updateUser).toHaveBeenCalledWith(
-    expect.objectContaining({
-      where: { id: 1 },
-      data: {
-        password: expect.any(String)
-      }
-    })
-  );
   expect(res).toMatchSnapshot();
 });
 
 describe('Update user validation errors', () => {
   it('returns correct error messages', async () => {
-    server.context = () => ({
-      prisma,
-      user: { id: 1, email: 'test@user.com' }
-    });
-
-    client = createTestClient(server);
-
     const res = await client.query({
       query: UPDATE_USER,
       variables: {
@@ -200,12 +169,6 @@ describe('Update user validation errors', () => {
 });
 
 it('not able to request forgot password if user doesnt exist', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test+user@email.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: FORGOT_PASSWORD,
     variables: {
@@ -215,10 +178,6 @@ it('not able to request forgot password if user doesnt exist', async () => {
     }
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({
-    email: 'weird+user@email.com'
-  });
-  expect(prisma.updateUser).not.toHaveBeenCalled();
   expect(sgMail.send).not.toHaveBeenCalled();
 
   // Sends this message back to the user irrespective of success or not
@@ -228,30 +187,15 @@ it('not able to request forgot password if user doesnt exist', async () => {
 });
 
 it('able to request forgot password successfully', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test+user@email.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: FORGOT_PASSWORD,
     variables: {
       input: {
-        email: 'test+user@email.com'
+        email: user.email
       }
     }
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({
-    email: 'test+user@email.com'
-  });
-  expect(prisma.updateUser).toHaveBeenCalledWith({
-    where: { email: 'test+user@email.com' },
-    data: {
-      resetPasswordToken: 'UUID-TOKEN'
-    }
-  });
   expect(sgMail.send).toHaveBeenCalled();
   expect(res.data.ForgotPassword.message).toBe(
     'A link to reset your password will be sent to your registered email.'
@@ -259,12 +203,6 @@ it('able to request forgot password successfully', async () => {
 });
 
 it('able to reset password with correct token', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test+user@email.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: RESET_PASSWORD,
     variables: {
@@ -275,26 +213,10 @@ it('able to reset password with correct token', async () => {
     }
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({
-    resetPasswordToken: 'RESET-PASSWORD-TOKEN'
-  });
-  expect(prisma.updateUser).toHaveBeenCalledWith({
-    where: { resetPasswordToken: 'RESET-PASSWORD-TOKEN' },
-    data: {
-      password: expect.any(String),
-      resetPasswordToken: null
-    }
-  });
   expect(res.data.ResetPassword.message).toBe('Password updated successfully.');
 });
 
 it('not able to reset password with wrong token', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test+user@email.com' }
-  });
-
-  client = createTestClient(server);
   const res = await client.query({
     query: RESET_PASSWORD,
     variables: {
@@ -305,25 +227,17 @@ it('not able to reset password with wrong token', async () => {
     }
   });
 
-  expect(prisma.user).toHaveBeenCalledWith({
-    resetPasswordToken: 'RESET-PASSWORD-TOKEN-WRONG'
-  });
-  expect(prisma.updateUser).not.toHaveBeenCalled();
   expect(res).toMatchSnapshot();
 });
 
 it('able to delete user successfully', async () => {
-  server.context = () => ({
-    prisma,
-    user: { id: 1, email: 'test+user@email.com' }
-  });
+  const existingUsers = await prisma.users();
+  expect(existingUsers.length).toBe(1);
 
-  client = createTestClient(server);
   await client.query({
     query: DELETE_USER
   });
 
-  expect(prisma.deleteUser).toHaveBeenCalledWith({
-    id: 1
-  });
+  const users = await prisma.users();
+  expect(users.length).toBe(0);
 });

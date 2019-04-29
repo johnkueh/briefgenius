@@ -3,11 +3,8 @@ import { gql } from 'apollo-server-express';
 export const ME = gql`
   query {
     Me {
-      id
       name
       email
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -17,7 +14,6 @@ mutation Signup($input: SignupInput!) {
   Signup(input: $input) {
     jwt
     user {
-      id
       name
       email
     }
@@ -30,7 +26,6 @@ mutation Login($input: LoginInput!) {
   Login(input: $input) {
     jwt
     user {
-      id
       name
       email
     }
@@ -41,7 +36,6 @@ mutation Login($input: LoginInput!) {
 export const UPDATE_USER = `
 mutation UpdateUser($input: UpdateUserInput!) {
   UpdateUser(input: $input) {
-    id
     name
     email
   }
