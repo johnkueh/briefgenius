@@ -8,8 +8,8 @@
   "scripts": {
     "tunnel": "ssh -R zapcms.serveo.net:80:localhost:8000 serveo.net",
     "console": "nodemon --exec babel-node console.js",
-    "start": "nodemon --exec babel-node server.js",
-    "dev": "nodemon --exec babel-node server.js",
+    "start": "nodemon --exec babel-node ./src/server.js",
+    "dev": "nodemon --exec babel-node ./src/server.js",
     "test": "jest --watch"
   },
   "dependencies": {
