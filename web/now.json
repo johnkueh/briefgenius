@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "name": "BriefGenius",
+  "alias": "stage.briefgenius.com",
+  "builds": [
+    {
+      "src": "next.config.js",
+      "use": "@now/next"
+    }
+  ],
+  "build": {
+    "env": {}
+  },
+  "env": {}
+}
