@@ -40,7 +40,10 @@ it('able to get user profile', async () => {
     query: ME
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.Me).toEqual({
+    email: user.email,
+    name: user.name
+  });
 });
 
 it('able to login successfully', async () => {
@@ -140,7 +143,10 @@ it('able to update user profile successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.UpdateUser).toEqual({
+    email: 'updated+user@test.com',
+    name: user.name
+  });
 });
 
 it('able to update user password successfully', async () => {
@@ -156,7 +162,10 @@ it('able to update user password successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.UpdateUser).toEqual({
+    email: 'test@user.com',
+    name: user.name
+  });
 });
 
 describe('Update user validation errors', () => {
