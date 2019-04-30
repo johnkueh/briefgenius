@@ -1,11 +1,5 @@
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-import { createTestClient } from 'apollo-server-testing';
-import { ApolloServer } from 'apollo-server-express';
 import sgMail from '@sendgrid/mail';
-import typeDefs from '../../schema';
-import resolvers from '../../resolvers';
-import schemaDirectives from '../../directives';
+import { graphqlRequest, prisma } from '../../lib/test-util';
 import {
   ME,
   SIGNUP,
@@ -16,40 +10,33 @@ import {
   DELETE_USER
 } from '../../queries/user';
 
-dotenv.config({ path: '.env.test' });
-const { prisma } = require('../../../generated/prisma-client');
-
 let user;
-let client;
+let jwt;
 
 beforeEach(async () => {
   await prisma.deleteManyUsers();
 
-  user = await prisma.createUser({
-    id: 'A-HASHED-ID',
-    name: 'Test User',
-    email: 'test+user@test.com',
-    password: bcrypt.hashSync('testpassword', 10),
-    resetPasswordToken: 'RESET-PASSWORD-TOKEN'
-  });
-
-  const server = await new ApolloServer({
-    typeDefs,
-    resolvers,
-    schemaDirectives,
-    context: async ({ req }) => {
-      return {
-        prisma,
-        user
-      };
+  ({
+    data: {
+      Signup: { user, jwt }
     }
-  });
-
-  client = createTestClient(server);
+  } = await graphqlRequest({
+    query: SIGNUP,
+    variables: {
+      input: {
+        name: 'Test User',
+        email: 'test@user.com',
+        password: 'testpassword'
+      }
+    }
+  }));
 });
 
 it('able to get user profile', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
     query: ME
   });
 
@@ -57,7 +44,10 @@ it('able to get user profile', async () => {
 });
 
 it('able to login successfully', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
     query: LOGIN,
     variables: {
       input: {
@@ -67,11 +57,19 @@ it('able to login successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.Login).toEqual(
+    expect.objectContaining({
+      jwt: expect.any(String),
+      user: {
+        email: user.email,
+        name: user.name
+      }
+    })
+  );
 });
 
 it('able to signup successfully', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
     query: SIGNUP,
     variables: {
       input: {
@@ -82,12 +80,20 @@ it('able to signup successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.Signup).toEqual(
+    expect.objectContaining({
+      jwt: expect.any(String),
+      user: {
+        email: 'new+test+user@test.com',
+        name: 'A new Test User'
+      }
+    })
+  );
 });
 
 describe('signup - validation errors', () => {
   it('returns correct error messages', async () => {
-    const res = await client.query({
+    const res = await graphqlRequest({
       query: SIGNUP,
       variables: {
         input: {
@@ -106,12 +112,12 @@ describe('signup - validation errors', () => {
   });
 
   it('returns correct error message when email is taken during signup', async () => {
-    const res = await client.query({
+    const res = await graphqlRequest({
       query: SIGNUP,
       variables: {
         input: {
           name: 'Test User',
-          email: 'test+user@test.com',
+          email: 'test@user.com',
           password: 'testpassword'
         }
       }
@@ -122,7 +128,10 @@ describe('signup - validation errors', () => {
 });
 
 it('able to update user profile successfully', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
     query: UPDATE_USER,
     variables: {
       input: {
@@ -135,7 +144,10 @@ it('able to update user profile successfully', async () => {
 });
 
 it('able to update user password successfully', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
     query: UPDATE_USER,
     variables: {
       input: {
@@ -149,7 +161,10 @@ it('able to update user password successfully', async () => {
 
 describe('Update user validation errors', () => {
   it('returns correct error messages', async () => {
-    const res = await client.query({
+    const res = await graphqlRequest({
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      },
       query: UPDATE_USER,
       variables: {
         input: {
@@ -169,7 +184,7 @@ describe('Update user validation errors', () => {
 });
 
 it('not able to request forgot password if user doesnt exist', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
     query: FORGOT_PASSWORD,
     variables: {
       input: {
@@ -187,7 +202,7 @@ it('not able to request forgot password if user doesnt exist', async () => {
 });
 
 it('able to request forgot password successfully', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
     query: FORGOT_PASSWORD,
     variables: {
       input: {
@@ -203,7 +218,12 @@ it('able to request forgot password successfully', async () => {
 });
 
 it('able to reset password with correct token', async () => {
-  const res = await client.query({
+  await prisma.updateUser({
+    where: { email: user.email },
+    data: { resetPasswordToken: 'RESET-PASSWORD-TOKEN' }
+  });
+
+  const res = await graphqlRequest({
     query: RESET_PASSWORD,
     variables: {
       input: {
@@ -217,7 +237,7 @@ it('able to reset password with correct token', async () => {
 });
 
 it('not able to reset password with wrong token', async () => {
-  const res = await client.query({
+  const res = await graphqlRequest({
     query: RESET_PASSWORD,
     variables: {
       input: {
@@ -227,14 +247,17 @@ it('not able to reset password with wrong token', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.errors[0].message).toBe('Password reset token is invalid.');
 });
 
 it('able to delete user successfully', async () => {
   const existingUsers = await prisma.users();
   expect(existingUsers.length).toBe(1);
 
-  await client.query({
+  await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
     query: DELETE_USER
   });
 
