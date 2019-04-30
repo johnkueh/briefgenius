@@ -3,15 +3,16 @@ import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 import jwt from 'express-jwt';
 import bodyParser from 'body-parser';
-import { prisma } from '../generated/prisma-client';
 import typeDefs from './schema';
 import resolvers from './resolvers';
 import schemaDirectives from './directives';
 
 const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
 dotenv.config({ path: envFile });
+const { prisma: prismaClient } = require('../generated/prisma-client');
 
-const app = express();
+export const prisma = prismaClient;
+export const app = express();
 
 app.use(
   jwt({ secret: process.env.JWT_SECRET, credentialsRequired: false }),
@@ -30,12 +31,12 @@ const server = new ApolloServer({
     let user = null;
     if (req) {
       if (req.user) {
-        user = await prisma.user({ id: req.user.id });
+        user = await prismaClient.user({ id: req.user.id });
       }
     }
 
     return {
-      prisma,
+      prisma: prismaClient,
       user
     };
   }
@@ -45,4 +46,7 @@ server.applyMiddleware({ app });
 
 app.use(bodyParser.raw({ type: '*/*' }));
 
-export default app;
+export default {
+  app,
+  prisma
+};

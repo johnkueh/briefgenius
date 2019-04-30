@@ -1,18 +1,5 @@
-import request from 'supertest';
-import app from '../../app';
+import { graphqlRequest } from '../../lib/test-util';
 import { ME, UPDATE_USER, DELETE_USER } from '../../queries/user';
-
-const graphqlRequest = async ({ variables, query }) => {
-  const { body } = await request(app)
-    .post('/graphql')
-    .send({
-      query,
-      variables
-    });
-
-  expect(body).toHaveProperty('data');
-  return body;
-};
 
 const errorMessage = 'You must be authenticated to perform this action';
 
