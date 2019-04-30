@@ -1,9 +1,6 @@
 import request from 'supertest';
-import dotenv from 'dotenv';
 import app from '../../app';
 import { ME, UPDATE_USER, DELETE_USER } from '../../queries/user';
-
-dotenv.config({ path: '.env.test' });
 
 const graphqlRequest = async ({ variables, query }) => {
   const { body } = await request(app)
