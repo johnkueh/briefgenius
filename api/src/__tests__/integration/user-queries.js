@@ -14,8 +14,6 @@ let user;
 let jwt;
 
 beforeEach(async () => {
-  await prisma.deleteManyUsers();
-
   ({
     data: {
       Signup: { user, jwt }
@@ -32,6 +30,10 @@ beforeEach(async () => {
   }));
 });
 
+afterEach(async () => {
+  await prisma.deleteManyUsers();
+});
+
 it('able to get user profile', async () => {
   const res = await graphqlRequest({
     headers: {
@@ -40,7 +42,10 @@ it('able to get user profile', async () => {
     query: ME
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data.Me).toEqual({
+    email: user.email,
+    name: user.name
+  });
 });
 
 it('able to login successfully', async () => {
@@ -57,15 +62,15 @@ it('able to login successfully', async () => {
     }
   });
 
-  expect(res.data.Login).toEqual(
-    expect.objectContaining({
+  expect(res.data).toEqual({
+    Login: expect.objectContaining({
       jwt: expect.any(String),
       user: {
         email: user.email,
         name: user.name
       }
     })
-  );
+  });
 });
 
 it('able to signup successfully', async () => {
@@ -80,15 +85,15 @@ it('able to signup successfully', async () => {
     }
   });
 
-  expect(res.data.Signup).toEqual(
-    expect.objectContaining({
+  expect(res.data).toEqual({
+    Signup: expect.objectContaining({
       jwt: expect.any(String),
       user: {
         email: 'new+test+user@test.com',
         name: 'A new Test User'
       }
     })
-  );
+  });
 });
 
 describe('signup - validation errors', () => {
@@ -140,7 +145,12 @@ it('able to update user profile successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data).toEqual({
+    UpdateUser: {
+      email: 'updated+user@test.com',
+      name: user.name
+    }
+  });
 });
 
 it('able to update user password successfully', async () => {
@@ -156,7 +166,12 @@ it('able to update user password successfully', async () => {
     }
   });
 
-  expect(res).toMatchSnapshot();
+  expect(res.data).toEqual({
+    UpdateUser: {
+      email: 'test@user.com',
+      name: user.name
+    }
+  });
 });
 
 describe('Update user validation errors', () => {
@@ -196,9 +211,11 @@ it('not able to request forgot password if user doesnt exist', async () => {
   expect(sgMail.send).not.toHaveBeenCalled();
 
   // Sends this message back to the user irrespective of success or not
-  expect(res.data.ForgotPassword.message).toBe(
-    'A link to reset your password will be sent to your registered email.'
-  );
+  expect(res.data).toEqual({
+    ForgotPassword: {
+      message: 'A link to reset your password will be sent to your registered email.'
+    }
+  });
 });
 
 it('able to request forgot password successfully', async () => {
@@ -212,9 +229,11 @@ it('able to request forgot password successfully', async () => {
   });
 
   expect(sgMail.send).toHaveBeenCalled();
-  expect(res.data.ForgotPassword.message).toBe(
-    'A link to reset your password will be sent to your registered email.'
-  );
+  expect(res.data).toEqual({
+    ForgotPassword: {
+      message: 'A link to reset your password will be sent to your registered email.'
+    }
+  });
 });
 
 it('able to reset password with correct token', async () => {
@@ -233,7 +252,11 @@ it('able to reset password with correct token', async () => {
     }
   });
 
-  expect(res.data.ResetPassword.message).toBe('Password updated successfully.');
+  expect(res.data).toEqual({
+    ResetPassword: {
+      message: 'Password updated successfully.'
+    }
+  });
 });
 
 it('not able to reset password with wrong token', async () => {
