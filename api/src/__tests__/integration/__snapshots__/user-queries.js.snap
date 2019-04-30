@@ -112,21 +112,3 @@ Object {
   },
 }
 `;
-
-exports[`signup - validation errors able to update user profile successfully 1`] = `
-Object {
-  "data": Object {
-    "UpdateUser": Object {
-      "email": "updated+user@test.com",
-      "name": "Test User",
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
