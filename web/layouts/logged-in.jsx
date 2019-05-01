@@ -17,12 +17,11 @@ const ME = gql`
 `;
 
 const LoggedInLayout = ({ children }) => {
-  const { isLoggedIn } = useContext(AuthContext);
   const {
-    data: { Me },
-    error,
-    loading
-  } = useQuery(ME);
+    isLoggedIn,
+    user: { email }
+  } = useContext(AuthContext);
+  const { error, loading } = useQuery(ME);
 
   useEffect(() => {
     if (!isLoggedIn || error) {
@@ -41,7 +40,8 @@ const LoggedInLayout = ({ children }) => {
         <div className="my-5">{children}</div>
         <Link href="/logout">
           <a>Logout</a>
-        </Link>
+        </Link>{' '}
+        ({email})
       </MainLayout>
     );
   }
