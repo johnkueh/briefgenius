@@ -5,6 +5,7 @@ import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import ReactGA from 'react-ga';
 import withApolloClient from '../lib/with-apollo-client';
 import AuthProvider from '../contexts/authentication';
+import '../styles/index.scss';
 
 class MyApp extends App {
   componentDidMount() {

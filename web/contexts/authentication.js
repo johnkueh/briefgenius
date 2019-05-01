@@ -5,14 +5,14 @@ import { getItem, setItem } from '../lib/local-storage';
 let initialState = {
   isLoggedIn: false,
   jwt: null,
-  user: null
+  user: {}
 };
 
 if (process.browser) {
   initialState = {
     isLoggedIn: getItem('isLoggedIn'),
     jwt: getItem('jwt'),
-    user: getItem('user')
+    user: getItem('user') || {}
   };
 }
 // end
@@ -38,7 +38,7 @@ const reducer = (state, action) => {
         isLoggedIn: action.isLoggedIn
       };
     default:
-      throw new Error();
+      return initialState;
   }
 };
 

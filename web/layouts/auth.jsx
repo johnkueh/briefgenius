@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import '../styles/index.scss';
 
 const AuthLayout = ({ children }) => (
   <div className="container p-5">
