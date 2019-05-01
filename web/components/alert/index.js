@@ -1,19 +1,21 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Alert = ({ type, messages }) => (
-  <div className={`alert alert-${type}`}>
-    {messages.map((message, index) => (
-      <p key={index} className="m-0">
-        {message}
-      </p>
-    ))}
-  </div>
-);
+const Alert = ({ type, errors }) =>
+  errors && (
+    <div className={`alert alert-${type}`}>
+      {_.map(errors, (val, key) => (
+        <p key={key} className="m-0 mb-1">
+          {val}
+        </p>
+      ))}
+    </div>
+  );
 
 export default Alert;
 
 Alert.propTypes = {
   type: PropTypes.string.isRequired,
-  messages: PropTypes.array.isRequired
+  errors: PropTypes.object
 };

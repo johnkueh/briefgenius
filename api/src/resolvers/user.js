@@ -56,7 +56,11 @@ export default {
         };
       }
 
-      throw new AuthenticationError('Please check your credentials and try again.');
+      throw new UserInputError('Authentication error', {
+        errors: {
+          auth: 'Please check your credentials and try again.'
+        }
+      });
     },
     async ForgotPassword(
       parent,

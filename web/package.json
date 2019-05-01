@@ -3,10 +3,10 @@
     "@zeit/next-sass": "^1.0.1",
     "apollo-boost": "^0.3.1",
     "bootstrap": "^4.3.1",
-    "formik": "^1.5.2",
     "classnames": "^2.2.6",
     "dotenv": "^7.0.0",
     "dotenv-webpack": "^1.7.0",
+    "formik": "^1.5.2",
     "graphql": "^14.2.1",
     "graphql-tag": "^2.10.1",
     "isomorphic-unfetch": "^3.0.0",
@@ -16,6 +16,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-apollo": "^2.5.3",
+    "react-apollo-hooks": "^0.4.5",
     "react-dom": "^16.8.4",
     "react-ga": "^2.5.7",
     "styled-jsx": "^3.2.1",
@@ -27,5 +28,8 @@
     "start": "next start -p $PORT",
     "export": "next export",
     "deploy": "npm run build && npm run export"
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^1.6.0"
   }
 }

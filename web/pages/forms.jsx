@@ -1,4 +1,4 @@
-import Layout from '../layouts/main';
+import Layout from '../layouts/logged-in';
 import Link from 'next/link';
 
 const Forms = () => {
