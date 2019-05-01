@@ -1,24 +1,38 @@
 import React, { useReducer } from 'react';
+import { getItem, setItem } from '../lib/local-storage';
 
-const initialState = {
+// For server side vs client side in next.js
+let initialState = {
   isLoggedIn: false,
   jwt: null,
   user: null
 };
 
+if (process.browser) {
+  initialState = {
+    isLoggedIn: getItem('isLoggedIn'),
+    jwt: getItem('jwt'),
+    user: getItem('user')
+  };
+}
+// end
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'auth.SET_JWT':
+      setItem('jwt', action.jwt);
       return {
         ...state,
         jwt: action.jwt
       };
     case 'auth.SET_USER':
+      setItem('user', action.user);
       return {
         ...state,
         user: action.user
       };
     case 'auth.SET_IS_LOGGED_IN':
+      setItem('isLoggedIn', action.isLoggedIn);
       return {
         ...state,
         isLoggedIn: action.isLoggedIn
@@ -32,6 +46,7 @@ export const AuthContext = React.createContext(initialState);
 
 export default ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <AuthContext.Provider
       value={{

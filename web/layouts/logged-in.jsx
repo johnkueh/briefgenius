@@ -17,10 +17,13 @@ const LoggedInLayout = ({ children }) => {
     <MainLayout>
       <Link href="/">
         <a>
-          <h3 className="mb-5">briefgenius</h3>
+          <h3>briefgenius</h3>
         </a>
       </Link>
-      {children}
+      <div className="my-5">{children}</div>
+      <Link href="/logout">
+        <a>Logout</a>
+      </Link>
     </MainLayout>
   );
 };

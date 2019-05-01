@@ -1,6 +1,8 @@
-export default () => (
+import PropTypes from 'prop-types';
+
+const PageLoading = ({ title }) => (
   <>
-    <div>Loading...</div>
+    <div>{title}</div>
     <style jsx>{`
       div {
         height: 100vh;
@@ -12,3 +14,13 @@ export default () => (
     `}</style>
   </>
 );
+
+export default PageLoading;
+
+PageLoading.propTypes = {
+  title: PropTypes.string
+};
+
+PageLoading.defaultProps = {
+  title: 'Loading...'
+};
