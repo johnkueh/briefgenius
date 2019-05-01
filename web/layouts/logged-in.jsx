@@ -1,11 +1,17 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
+import Router from 'next/router';
 import { AuthContext } from '../contexts/authentication';
 import MainLayout from './main';
 
 const LoggedInLayout = ({ children }) => {
-  const { jwt, user, isLoggedIn } = useContext(AuthContext);
-  console.log(jwt, user, isLoggedIn);
+  const { isLoggedIn } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      Router.push('/login');
+    }
+  });
 
   return (
     <MainLayout>
