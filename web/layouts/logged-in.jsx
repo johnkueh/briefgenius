@@ -17,11 +17,11 @@ const ME = gql`
 `;
 
 const LoggedInLayout = ({ children }) => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
   const {
     data: { Me },
     error,
-    loading = true
+    loading
   } = useQuery(ME);
 
   useEffect(() => {
@@ -30,21 +30,29 @@ const LoggedInLayout = ({ children }) => {
     }
   });
 
-  if (loading) return <PageLoading />;
+  if (!loading && isLoggedIn) {
+    return (
+      <MainLayout>
+        <Link href="/">
+          <a>
+            <h3>briefgenius</h3>
+          </a>
+        </Link>
+        <div className="my-5">{children}</div>
+        <Link href="/logout">
+          <a>Logout</a>
+        </Link>
+      </MainLayout>
+    );
+  }
 
-  return (
-    <MainLayout>
-      <Link href="/">
-        <a>
-          <h3>briefgenius</h3>
-        </a>
-      </Link>
-      <div className="my-5">{children}</div>
-      <Link href="/logout">
-        <a>Logout</a>
-      </Link>
-    </MainLayout>
-  );
+  if (loading) {
+    return <PageLoading />;
+  }
+
+  if (!loading && !isLoggedIn) {
+    return null;
+  }
 };
 
 export default LoggedInLayout;

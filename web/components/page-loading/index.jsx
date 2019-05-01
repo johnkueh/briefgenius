@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 
 const PageLoading = ({ title }) => (
   <>
-    <div>{title}</div>
+    <div className="PageLoading">{title}</div>
     <style jsx>{`
-      div {
+      .PageLoading {
         height: 100vh;
         width: 100%;
         display: flex;
