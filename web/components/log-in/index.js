@@ -8,7 +8,7 @@ const LogIn = ({ errors, onSubmit }) => (
   <Formik initialValues={{ email: '', password: '' }} onSubmit={onSubmit}>
     {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
       <form onSubmit={handleSubmit} className="mt-3">
-        {errors && <Alert type="warning" messages={errors.map(error => error.message)} />}
+        <Alert type="warning" errors={errors} />
         <input
           name="email"
           onChange={handleChange}
@@ -54,6 +54,6 @@ const LogIn = ({ errors, onSubmit }) => (
 export default LogIn;
 
 LogIn.propTypes = {
-  errors: PropTypes.array,
+  errors: PropTypes.object,
   onSubmit: PropTypes.func.isRequired
 };

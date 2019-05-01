@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { useState, useContext } from 'react';
 import Router from 'next/router';
 import gql from 'graphql-tag';

@@ -96,6 +96,25 @@ it('able to signup successfully', async () => {
   });
 });
 
+it('login - bad credentials', async () => {
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    query: LOGIN,
+    variables: {
+      input: {
+        email: user.email,
+        password: 'testpasswordwrong'
+      }
+    }
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    auth: 'Please check your credentials and try again.'
+  });
+});
+
 describe('signup - validation errors', () => {
   it('returns correct error messages', async () => {
     const res = await graphqlRequest({
