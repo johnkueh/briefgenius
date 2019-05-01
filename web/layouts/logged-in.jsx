@@ -1,17 +1,36 @@
 import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
+import gql from 'graphql-tag';
+import { useQuery } from 'react-apollo-hooks';
 import { AuthContext } from '../contexts/authentication';
+import PageLoading from '../components/page-loading';
 import MainLayout from './main';
 
+const ME = gql`
+  query {
+    Me {
+      name
+      email
+    }
+  }
+`;
+
 const LoggedInLayout = ({ children }) => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const {
+    data: { Me },
+    error,
+    loading = true
+  } = useQuery(ME);
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn || error) {
       Router.push('/login');
     }
   });
+
+  if (loading) return <PageLoading />;
 
   return (
     <MainLayout>

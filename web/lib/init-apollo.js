@@ -1,3 +1,4 @@
+import { getItem } from './local-storage';
 import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import introspectionQueryResultData from './fragment-types.json';
 const fragmentMatcher = new IntrospectionFragmentMatcher({
@@ -6,9 +7,27 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 
 // From https://raw.githubusercontent.com/zeit/next.js/master/examples/with-apollo/lib/init-apollo.js
 import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost';
+import { ApolloLink, concat } from 'apollo-link';
 import fetch from 'isomorphic-unfetch';
 
 let apolloClient = null;
+
+const httpLink = new HttpLink({
+  uri: process.env.API_ENDPOINT // Server URL (must be absolute)
+});
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+  // add the authorization to the headers
+  if (process.browser) {
+    operation.setContext({
+      headers: {
+        Authorization: `Bearer ${getItem('jwt')}`
+      }
+    });
+  }
+
+  return forward(operation);
+});
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!process.browser) {
@@ -16,16 +35,10 @@ if (!process.browser) {
 }
 
 function create(initialState) {
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     connectToDevTools: process.browser,
     ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
-    link: new HttpLink({
-      uri: process.env.API_ENDPOINT, // Server URL (must be absolute)
-      // headers: {
-      //   Authorization: `Bearer ${API_KEY}`
-      // } 
-    }),
+    link: concat(authMiddleware, httpLink),
     cache: new InMemoryCache({ fragmentMatcher }).restore(initialState || {})
   });
 }
