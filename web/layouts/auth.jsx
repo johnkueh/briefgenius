@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import '../styles/index.scss';
 
 const AuthLayout = ({ children }) => (
@@ -7,7 +8,11 @@ const AuthLayout = ({ children }) => (
       <div className="col-md-4 offset-md-4">
         <div className="card border-0 p-4 bg-light">
           <div className="my-3 text-center">
-            <h3>briefgenius</h3>
+            <Link href="/">
+              <a>
+                <h3>briefgenius</h3>
+              </a>
+            </Link>
           </div>
           {children}
         </div>
