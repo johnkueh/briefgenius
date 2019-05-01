@@ -38,7 +38,7 @@ const reducer = (state, action) => {
         isLoggedIn: action.isLoggedIn
       };
     default:
-      throw new Error();
+      return initialState;
   }
 };
 
