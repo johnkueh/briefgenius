@@ -25,7 +25,9 @@ it('displays errors', () => {
 });
 
 it('submits with correct data', async () => {
-  const handler = jest.fn();
+  const handler = jest.fn((_, { setSubmitting }) => {
+    setSubmitting(false);
+  });
   const { container, getByText, getByPlaceholderText } = render(<Login onSubmit={handler} />);
 
   const emailInput = getByPlaceholderText('Email address');
@@ -50,5 +52,6 @@ it('submits with correct data', async () => {
       { email: 'test@user.com', password: 'password' },
       expect.objectContaining({ setSubmitting: expect.any(Function) })
     );
+    expect(submitButton).not.toHaveAttribute('disabled');
   });
 });
