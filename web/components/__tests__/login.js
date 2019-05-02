@@ -4,6 +4,7 @@ import {
   render,
   fireEvent,
   cleanup,
+  wait,
   waitForElement,
   waitForDomChange
 } from 'react-testing-library';
@@ -24,18 +25,8 @@ it('displays errors', () => {
 });
 
 it('submits with correct data', async () => {
-  const { container, getByText, getByPlaceholderText } = render(
-    <Login
-      onSubmit={(data, { setSubmitting }) => {
-        expect(data).toEqual({
-          email: 'test@user.com',
-          password: 'password'
-        });
-        expect(setSubmitting).toBeInstanceOf(Function);
-        setSubmitting(false);
-      }}
-    />
-  );
+  const handler = jest.fn();
+  const { container, getByText, getByPlaceholderText } = render(<Login onSubmit={handler} />);
 
   const emailInput = getByPlaceholderText('Email address');
   fireEvent.change(emailInput, { target: { value: 'test@user.com' } });
@@ -53,4 +44,11 @@ it('submits with correct data', async () => {
   expect(submitButton).not.toHaveAttribute('disabled');
   fireEvent.click(submitButton);
   expect(submitButton).toHaveAttribute('disabled');
+
+  await wait(() => {
+    expect(handler).toHaveBeenCalledWith(
+      { email: 'test@user.com', password: 'password' },
+      expect.objectContaining({ setSubmitting: expect.any(Function) })
+    );
+  });
 });
