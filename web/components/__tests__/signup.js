@@ -1,4 +1,4 @@
-import Login from '../log-in';
+import Signup from '../sign-up';
 import React, { useContext } from 'react';
 import {
   render,
@@ -17,7 +17,7 @@ afterEach(() => {
 it('displays errors', () => {
   const handler = jest.fn();
   const { container } = render(
-    <Login errors={{ name: 'Too long', email: 'Not an email' }} onSubmit={handler} />
+    <Signup errors={{ name: 'Too long', email: 'Not an email' }} onSubmit={handler} />
   );
 
   expect(container).toHaveTextContent('Too long');
@@ -28,17 +28,18 @@ it('submits with correct data', async () => {
   const handler = jest.fn((_, { setSubmitting }) => {
     setSubmitting(false);
   });
-  const { container, getByText, getByPlaceholderText } = render(<Login onSubmit={handler} />);
+  const { container, getByText, getByPlaceholderText } = render(<Signup onSubmit={handler} />);
 
-  const emailInput = getByPlaceholderText('Email address');
-  fireEvent.change(emailInput, { target: { value: 'test@user.com' } });
+  fireEvent.change(getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
 
-  const passwordInput = getByPlaceholderText('Password');
-  fireEvent.change(passwordInput, { target: { value: 'password' } });
+  fireEvent.change(getByPlaceholderText('Email address'), { target: { value: 'test@user.com' } });
 
-  const submitButton = getByText(/log in/i);
+  fireEvent.change(getByPlaceholderText('Password'), { target: { value: 'password' } });
+
+  const submitButton = getByText(/sign up/i);
 
   expect(container.firstChild).toHaveFormValues({
+    name: 'John Doe',
     email: 'test@user.com',
     password: 'password'
   });
@@ -49,7 +50,7 @@ it('submits with correct data', async () => {
 
   await wait(() => {
     expect(handler).toHaveBeenCalledWith(
-      { email: 'test@user.com', password: 'password' },
+      { email: 'test@user.com', name: 'John Doe', password: 'password' },
       expect.objectContaining({ setSubmitting: expect.any(Function) })
     );
     expect(submitButton).not.toHaveAttribute('disabled');
