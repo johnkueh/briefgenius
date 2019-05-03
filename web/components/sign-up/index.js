@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
+import Button from '../button';
 import Alert from '../alert';
 
 const SignUp = ({ errors, onSubmit }) => (
@@ -24,9 +25,9 @@ const SignUp = ({ errors, onSubmit }) => (
           placeholder="Password"
         />
         <div className="mt-4">
-          <button disabled={isSubmitting} className="btn btn-block btn-primary" type="submit">
+          <Button loading={isSubmitting} className="btn btn-block btn-primary" type="submit">
             Sign up
-          </button>
+          </Button>
         </div>
         <div className="mt-3">
           Have an account?{' '}

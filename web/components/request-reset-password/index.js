@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
+import Button from '../button';
 import Alert from '../alert-messages';
 
 const RequestResetPassword = ({ messages, onSubmit }) => (
@@ -19,9 +20,9 @@ const RequestResetPassword = ({ messages, onSubmit }) => (
           placeholder="Email address"
         />
         <div className="mt-4">
-          <button disabled={isSubmitting} className="btn btn-block btn-primary" type="submit">
+          <Button loading={isSubmitting} className="btn btn-block btn-primary" type="submit">
             Submit
-          </button>
+          </Button>
         </div>
         <div className="mt-3">
           Dont have an account?{' '}

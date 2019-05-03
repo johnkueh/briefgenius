@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
-import Link from 'next/link';
+import Button from '../button';
 import Alert from '../alert-messages';
 
 const ResetPassword = ({ messages, onSubmit }) => (
@@ -25,9 +25,9 @@ const ResetPassword = ({ messages, onSubmit }) => (
           placeholder="Re-enter new password"
         />
         <div className="mt-4">
-          <button disabled={isSubmitting} className="btn btn-block btn-primary" type="submit">
+          <Button loading={isSubmitting} className="btn btn-block btn-primary" type="submit">
             Reset password
-          </button>
+          </Button>
         </div>
       </Form>
     )}

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
+import Button from '../button';
 import Alert from '../alert';
 
 const LogIn = ({ errors, onSubmit }) => (
@@ -23,9 +24,14 @@ const LogIn = ({ errors, onSubmit }) => (
           placeholder="Password"
         />
         <div className="mt-4">
-          <button disabled={isSubmitting} className="btn btn-block btn-primary" type="submit">
+          <Button
+            loading={isSubmitting}
+            loadingText="Logging in..."
+            className="btn btn-block btn-primary"
+            type="submit"
+          >
             Log in
-          </button>
+          </Button>
         </div>
         <div className="mt-3">
           <div>
