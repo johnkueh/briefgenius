@@ -3,15 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import Link from 'next/link';
-import Alert from '../alert';
+import Alert from '../alert-messages';
 
 const ResetPassword = ({ messages, onSubmit }) => (
   <Formik initialValues={{ password: '', repeatPassword: '' }} onSubmit={onSubmit}>
     {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
       <form onSubmit={handleSubmit} className="mt-3">
-        {_.map(messages, (content, type) => (
-          <Alert key={type} type={type} messages={content} />
-        ))}
+        <Alert messages={messages} />
         <label className="mb-3">Set a new password for your account</label>
         <input
           onChange={handleChange}
