@@ -14,14 +14,14 @@ it('does not render anything if empty', () => {
 });
 
 it('renders correct alert type', () => {
-  const { container } = render(<Alert errors={{ name: 'Too long' }} type="success" />);
+  const { container } = render(<Alert messages={{ name: 'Too long' }} type="success" />);
 
   expect(container.firstChild).toHaveClass('alert alert-success');
 });
 
 it('renders error messages', () => {
   const { container } = render(
-    <Alert errors={{ name: 'Too long', email: 'Not an email' }} type="error" />
+    <Alert messages={{ name: 'Too long', email: 'Not an email' }} type="error" />
   );
 
   expect(container).toHaveTextContent('Too long');
