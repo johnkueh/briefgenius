@@ -30,11 +30,8 @@ it('submits with correct data', async () => {
   });
   const { container, getByText, getByPlaceholderText } = render(<Login onSubmit={handler} />);
 
-  const emailInput = getByPlaceholderText('Email address');
-  fireEvent.change(emailInput, { target: { value: 'test@user.com' } });
-
-  const passwordInput = getByPlaceholderText('Password');
-  fireEvent.change(passwordInput, { target: { value: 'password' } });
+  fireEvent.change(getByPlaceholderText('Email address'), { target: { value: 'test@user.com' } });
+  fireEvent.change(getByPlaceholderText('Password'), { target: { value: 'password' } });
 
   const submitButton = getByText(/log in/i);
 

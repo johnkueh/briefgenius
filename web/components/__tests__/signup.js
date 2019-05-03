@@ -31,9 +31,7 @@ it('submits with correct data', async () => {
   const { container, getByText, getByPlaceholderText } = render(<Signup onSubmit={handler} />);
 
   fireEvent.change(getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-
   fireEvent.change(getByPlaceholderText('Email address'), { target: { value: 'test@user.com' } });
-
   fireEvent.change(getByPlaceholderText('Password'), { target: { value: 'password' } });
 
   const submitButton = getByText(/sign up/i);
