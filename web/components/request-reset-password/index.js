@@ -1,21 +1,18 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Formik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
 import Alert from '../alert-messages';
 
 const RequestResetPassword = ({ messages, onSubmit }) => (
   <Formik initialValues={{ email: '' }} onSubmit={onSubmit}>
     {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-      <form onSubmit={handleSubmit} className="mt-3">
+      <Form className="mt-3">
         <Alert messages={messages} />
         <label className="mb-3">Enter your email address to request for a password reset</label>
-        <input
+        <Field
           name="email"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.email}
           autoFocus
           className="form-control mb-3"
           type="email"
@@ -32,7 +29,7 @@ const RequestResetPassword = ({ messages, onSubmit }) => (
             <a>Sign up</a>
           </Link>
         </div>
-      </form>
+      </Form>
     )}
   </Formik>
 );

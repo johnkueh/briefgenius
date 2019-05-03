@@ -1,30 +1,24 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Formik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
 import Alert from '../alert-messages';
 
 const ResetPassword = ({ messages, onSubmit }) => (
   <Formik initialValues={{ password: '', repeatPassword: '' }} onSubmit={onSubmit}>
     {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-      <form onSubmit={handleSubmit} className="mt-3">
+      <Form className="mt-3">
         <Alert messages={messages} />
         <label className="mb-3">Set a new password for your account</label>
-        <input
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.password}
+        <Field
           autoFocus
           name="password"
           className="form-control mb-3"
           type="password"
           placeholder="New password"
         />
-        <input
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.repeatPassword}
+        <Field
           name="repeatPassword"
           className="form-control mb-3"
           type="password"
@@ -35,7 +29,7 @@ const ResetPassword = ({ messages, onSubmit }) => (
             Reset password
           </button>
         </div>
-      </form>
+      </Form>
     )}
   </Formik>
 );

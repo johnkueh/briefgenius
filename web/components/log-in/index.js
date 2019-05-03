@@ -1,29 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Formik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
 import Alert from '../alert';
 
 const LogIn = ({ errors, onSubmit }) => (
   <Formik initialValues={{ email: '', password: '' }} onSubmit={onSubmit}>
     {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-      <form onSubmit={handleSubmit} className="mt-3">
+      <Form className="mt-3">
         <Alert type="warning" messages={errors} />
-        <input
-          name="email"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.email}
+        <Field
           autoFocus
+          name="email"
           className="form-control mb-3"
           type="email"
           placeholder="Email address"
         />
-        <input
+        <Field
           name="password"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.password}
           className="form-control mb-3"
           type="password"
           placeholder="Password"
@@ -46,7 +40,7 @@ const LogIn = ({ errors, onSubmit }) => (
             </Link>
           </div>
         </div>
-      </form>
+      </Form>
     )}
   </Formik>
 );
