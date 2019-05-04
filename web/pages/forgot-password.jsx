@@ -1,10 +1,54 @@
+import { useState, useContext } from 'react';
+import gql from 'graphql-tag';
+import { useMutation } from 'react-apollo-hooks';
 import Layout from '../layouts/auth';
-import RequestResetPassword from '../components/request-reset-password';
+import ForgotPassword from '../components/forgot-password';
+
+export const FORGOT_PASSWORD = gql`
+  mutation ForgotPassword($input: ForgotPasswordInput!) {
+    ForgotPassword(input: $input) {
+      message
+    }
+  }
+`;
 
 const ForgotPasswordPage = () => {
+  const [messages, setMessages] = useState(null);
+  const forgotPassword = useMutation(FORGOT_PASSWORD);
+
   return (
     <Layout>
-      <RequestResetPassword />
+      <ForgotPassword
+        messages={messages}
+        onSubmit={async (currentValues, { setSubmitting }) => {
+          const { email } = currentValues;
+
+          try {
+            const {
+              data: {
+                ForgotPassword: { message }
+              }
+            } = await forgotPassword({
+              variables: {
+                input: { email }
+              }
+            });
+
+            setMessages({
+              success: {
+                email: message
+              }
+            });
+
+            setSubmitting(false);
+          } catch (error) {
+            setMessages({
+              warning: error.graphQLErrors[0].extensions.exception.errors
+            });
+            setSubmitting(false);
+          }
+        }}
+      />
     </Layout>
   );
 };

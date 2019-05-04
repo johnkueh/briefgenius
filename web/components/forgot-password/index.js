@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
@@ -5,34 +6,28 @@ import Link from 'next/link';
 import Button from '../button';
 import Alert from '../alert-messages';
 
-const SignUp = ({ messages, onSubmit }) => (
-  <Formik initialValues={{ name: '', email: '', password: '' }} onSubmit={onSubmit}>
+const ForgotPassword = ({ messages, onSubmit }) => (
+  <Formik initialValues={{ email: '' }} onSubmit={onSubmit}>
     {({ isSubmitting }) => (
       <Form className="mt-3">
         <Alert messages={messages} />
+        <label className="mb-3">Enter your email address to request for a password reset</label>
         <Field
-          autoFocus
           name="email"
+          autoFocus
           className="form-control mb-3"
           type="email"
           placeholder="Email address"
         />
-        <Field name="name" className="form-control mb-3" type="text" placeholder="Name" />
-        <Field
-          name="password"
-          className="form-control mb-3"
-          type="password"
-          placeholder="Password"
-        />
         <div className="mt-4">
           <Button loading={isSubmitting} className="btn btn-block btn-primary" type="submit">
-            Sign up
+            Submit
           </Button>
         </div>
         <div className="mt-3">
-          Have an account?{' '}
-          <Link href="/login">
-            <a>Log in</a>
+          Dont have an account?{' '}
+          <Link href="/signup">
+            <a>Sign up</a>
           </Link>
         </div>
       </Form>
@@ -40,9 +35,9 @@ const SignUp = ({ messages, onSubmit }) => (
   </Formik>
 );
 
-export default SignUp;
+export default ForgotPassword;
 
-SignUp.propTypes = {
+ForgotPassword.propTypes = {
   messages: PropTypes.object,
   onSubmit: PropTypes.func.isRequired
 };

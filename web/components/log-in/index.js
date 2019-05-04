@@ -1,37 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Formik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
-import Alert from '../alert';
+import Button from '../button';
+import Alert from '../alert-messages';
 
-const LogIn = ({ errors, onSubmit }) => (
+const LogIn = ({ messages, onSubmit }) => (
   <Formik initialValues={{ email: '', password: '' }} onSubmit={onSubmit}>
-    {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-      <form onSubmit={handleSubmit} className="mt-3">
-        <Alert type="warning" errors={errors} />
-        <input
-          name="email"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.email}
+    {({ isSubmitting }) => (
+      <Form className="mt-3">
+        <Alert messages={messages} />
+        <Field
           autoFocus
+          name="email"
           className="form-control mb-3"
           type="email"
           placeholder="Email address"
         />
-        <input
+        <Field
           name="password"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.password}
           className="form-control mb-3"
           type="password"
           placeholder="Password"
         />
         <div className="mt-4">
-          <button disabled={isSubmitting} className="btn btn-block btn-primary" type="submit">
+          <Button
+            loading={isSubmitting}
+            loadingText="Logging in..."
+            className="btn btn-block btn-primary"
+            type="submit"
+          >
             Log in
-          </button>
+          </Button>
         </div>
         <div className="mt-3">
           <div>
@@ -46,7 +46,7 @@ const LogIn = ({ errors, onSubmit }) => (
             </Link>
           </div>
         </div>
-      </form>
+      </Form>
     )}
   </Formik>
 );
@@ -54,6 +54,6 @@ const LogIn = ({ errors, onSubmit }) => (
 export default LogIn;
 
 LogIn.propTypes = {
-  errors: PropTypes.object,
+  messages: PropTypes.object,
   onSubmit: PropTypes.func.isRequired
 };

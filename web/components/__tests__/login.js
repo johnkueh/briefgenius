@@ -17,7 +17,7 @@ afterEach(() => {
 it('displays errors', () => {
   const handler = jest.fn();
   const { container } = render(
-    <Login errors={{ name: 'Too long', email: 'Not an email' }} onSubmit={handler} />
+    <Login messages={{ errors: { name: 'Too long', email: 'Not an email' } }} onSubmit={handler} />
   );
 
   expect(container).toHaveTextContent('Too long');
@@ -30,11 +30,8 @@ it('submits with correct data', async () => {
   });
   const { container, getByText, getByPlaceholderText } = render(<Login onSubmit={handler} />);
 
-  const emailInput = getByPlaceholderText('Email address');
-  fireEvent.change(emailInput, { target: { value: 'test@user.com' } });
-
-  const passwordInput = getByPlaceholderText('Password');
-  fireEvent.change(passwordInput, { target: { value: 'password' } });
+  fireEvent.change(getByPlaceholderText('Email address'), { target: { value: 'test@user.com' } });
+  fireEvent.change(getByPlaceholderText('Password'), { target: { value: 'password' } });
 
   const submitButton = getByText(/log in/i);
 
