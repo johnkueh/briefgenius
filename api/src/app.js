@@ -3,7 +3,7 @@ import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 import jwt from 'express-jwt';
 import bodyParser from 'body-parser';
-import typeDefs from './schema';
+import typeDefs, { validationSchema } from './schema';
 import resolvers from './resolvers';
 import schemaDirectives from './directives';
 
@@ -36,6 +36,7 @@ const server = new ApolloServer({
     }
 
     return {
+      validationSchema,
       prisma: prismaClient,
       user
     };

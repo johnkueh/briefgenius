@@ -2,10 +2,8 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
-import { UserInputError, AuthenticationError } from 'apollo-server';
+import { UserInputError } from 'apollo-server';
 import sendEmail from '../services/sendgrid';
-import validationSchema from '../validators/user';
-import validate from '../validators/validate';
 
 export default {
   Query: {
@@ -15,8 +13,6 @@ export default {
   },
   Mutation: {
     async Signup(parent, { input }, { prisma }, info) {
-      await validate({ input, schema: validationSchema.signup });
-
       const { name, email, password } = input;
       const existingUser = await prisma.user({ email });
 
@@ -43,8 +39,6 @@ export default {
       }
     },
     async Login(parent, { input }, { prisma }, info) {
-      await validate({ input, schema: validationSchema.login });
-
       const { email, password } = input;
       const user = await prisma.user({ email });
 
@@ -65,8 +59,6 @@ export default {
       });
     },
     async ForgotPassword(parent, { input }, { prisma }, info) {
-      await validate({ input, schema: validationSchema.forgotPassword });
-
       const { email } = input;
       const user = await prisma.user({ email });
 
@@ -95,8 +87,6 @@ export default {
       };
     },
     async ResetPassword(parent, { input }, { prisma }, info) {
-      await validate({ input, schema: validationSchema.resetPassword });
-
       const { password, repeatPassword, token } = input;
 
       if (password !== repeatPassword) {
@@ -128,8 +118,6 @@ export default {
       });
     },
     async UpdateUser(parent, { input }, { user, prisma }, info) {
-      await validate({ input, schema: validationSchema.updateUser });
-
       const { name, email, password } = input;
 
       if (password) {
