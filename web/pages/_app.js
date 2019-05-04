@@ -4,6 +4,7 @@ import React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import ReactGA from 'react-ga';
+import { CloudinaryContext } from 'cloudinary-react';
 import withApolloClient from '../lib/with-apollo-client';
 import AuthProvider from '../contexts/authentication';
 import '../styles/index.scss';
@@ -31,7 +32,9 @@ class MyApp extends App {
         <Container>
           <ApolloProvider client={apolloClient}>
             <ApolloHooksProvider client={apolloClient}>
-              <Component {...pageProps} />
+              <CloudinaryContext cloudName={process.env.CLOUDINARY_CLOUD_NAME}>
+                <Component {...pageProps} />
+              </CloudinaryContext>
             </ApolloHooksProvider>
           </ApolloProvider>
         </Container>

@@ -1,21 +1,25 @@
+import { useState } from 'react';
+import { Image, Transformation } from 'cloudinary-react';
 import { useUpload } from '../lib/use-upload';
 
 const Upload = () => {
-  const onSuccess = data => {
-    console.log('onSuccess', data);
-  };
-
-  const { openWidget } = useUpload(onSuccess);
+  const [image, setImage] = useState(null);
+  const { openWidget } = useUpload(publicId => {
+    setImage(publicId);
+  });
 
   return (
     <div>
       <button onClick={openWidget}>Upload</button>
+      <div>
+        {image && (
+          <Image publicId={image}>
+            <Transformation width="400" crop="scale" />
+          </Image>
+        )}
+      </div>
     </div>
   );
 };
-
-// const handleSuccess = ({ info: { public_id } }) => {
-//   console.log('handleSuccess', public_id);
-// };
 
 export default Upload;
