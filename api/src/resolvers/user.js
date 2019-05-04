@@ -2,7 +2,7 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
-import { UserInputError } from 'apollo-server';
+import ValidationErrors from '../helpers/validation-errors';
 import sendEmail from '../services/sendgrid';
 
 export default {
@@ -17,10 +17,8 @@ export default {
       const existingUser = await prisma.user({ email });
 
       if (existingUser) {
-        throw new UserInputError('ValidationError', {
-          errors: {
-            email: 'Email is already taken'
-          }
+        throw ValidationErrors({
+          email: 'Email is already taken'
         });
       } else {
         const user = await prisma.createUser({
@@ -52,10 +50,8 @@ export default {
         };
       }
 
-      throw new UserInputError('ValidationError', {
-        errors: {
-          auth: 'Please check your credentials and try again.'
-        }
+      throw ValidationErrors({
+        auth: 'Please check your credentials and try again.'
       });
     },
     async ForgotPassword(parent, { input }, { prisma }, info) {
@@ -90,10 +86,8 @@ export default {
       const { password, repeatPassword, token } = input;
 
       if (password !== repeatPassword) {
-        throw new UserInputError('ValidationError', {
-          errors: {
-            password: 'Repeated password does not match new password.'
-          }
+        throw ValidationErrors({
+          password: 'Repeated password does not match new password.'
         });
       }
 
@@ -113,9 +107,7 @@ export default {
         };
       }
 
-      throw new UserInputError('ValidationError', {
-        errors: { token: 'Password reset token is invalid.' }
-      });
+      throw new ValidationErrors({ token: 'Password reset token is invalid.' });
     },
     async UpdateUser(parent, { input }, { user, prisma }, info) {
       const { name, email, password } = input;
