@@ -1,4 +1,6 @@
-# Example monorepo app using Prisma and GraphQL for the API, and Next.js, React and Apollo Client for the client
+# Prisma/GraphQL/React/Next.js example
+
+Example monorepo (API and client in a single repo) app using Prisma, GraphQL, Next.js, React and Apollo Client. Unit and integration testing using Jest and react-testing-library.
 
 Tech stack - API
 
