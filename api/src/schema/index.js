@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 import userSchema, { validations as userValidations } from './user';
+import formSchema, { validations as formValidations } from './form';
 
 const linkSchema = gql`
   scalar DateTime
@@ -20,8 +21,9 @@ const linkSchema = gql`
   # }
 `;
 
-export default [linkSchema, userSchema];
+export default [linkSchema, userSchema, formSchema];
 
 export const validationSchema = {
-  ...userValidations
+  ...userValidations,
+  ...formValidations
 };

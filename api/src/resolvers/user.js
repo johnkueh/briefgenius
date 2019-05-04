@@ -7,12 +7,12 @@ import sendEmail from '../services/sendgrid';
 
 export default {
   Query: {
-    async Me(parent, args, { user, prisma }, info) {
+    async me(parent, args, { user, prisma }, info) {
       return prisma.user({ id: user.id });
     }
   },
   Mutation: {
-    async Signup(parent, { input }, { prisma }, info) {
+    async signup(parent, { input }, { prisma }, info) {
       const { name, email, password } = input;
       const existingUser = await prisma.user({ email });
 
@@ -36,7 +36,7 @@ export default {
         };
       }
     },
-    async Login(parent, { input }, { prisma }, info) {
+    async login(parent, { input }, { prisma }, info) {
       const { email, password } = input;
       const user = await prisma.user({ email });
 
@@ -54,7 +54,7 @@ export default {
         auth: 'Please check your credentials and try again.'
       });
     },
-    async ForgotPassword(parent, { input }, { prisma }, info) {
+    async forgotPassword(parent, { input }, { prisma }, info) {
       const { email } = input;
       const user = await prisma.user({ email });
 
@@ -82,7 +82,7 @@ export default {
         message: 'A link to reset your password will be sent to your registered email.'
       };
     },
-    async ResetPassword(parent, { input }, { prisma }, info) {
+    async resetPassword(parent, { input }, { prisma }, info) {
       const { password, repeatPassword, token } = input;
 
       if (password !== repeatPassword) {
@@ -109,7 +109,7 @@ export default {
 
       throw new ValidationErrors({ token: 'Password reset token is invalid.' });
     },
-    async UpdateUser(parent, { input }, { user, prisma }, info) {
+    async updateUser(parent, { input }, { user, prisma }, info) {
       const { name, email, password } = input;
 
       if (password) {
@@ -131,7 +131,7 @@ export default {
         }
       });
     },
-    async DeleteUser(
+    async deleteUser(
       parent,
       args,
       {

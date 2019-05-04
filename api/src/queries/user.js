@@ -1,6 +1,6 @@
 export const ME = `
   query {
-    Me {
+    me {
       name
       email
     }
@@ -8,8 +8,8 @@ export const ME = `
 `;
 
 export const SIGNUP = `
-mutation Signup($input: SignupInput!) {
-  Signup(input: $input) {
+mutation($input: SignupInput!) {
+  signup(input: $input) {
     jwt
     user {
       name
@@ -20,8 +20,8 @@ mutation Signup($input: SignupInput!) {
 `;
 
 export const LOGIN = `
-mutation Login($input: LoginInput!) {
-  Login(input: $input) {
+mutation($input: LoginInput!) {
+  login(input: $input) {
     jwt
     user {
       name
@@ -32,8 +32,8 @@ mutation Login($input: LoginInput!) {
 `;
 
 export const UPDATE_USER = `
-mutation UpdateUser($input: UpdateUserInput!) {
-  UpdateUser(input: $input) {
+mutation($input: UpdateUserInput!) {
+  updateUser(input: $input) {
     name
     email
   }
@@ -41,24 +41,24 @@ mutation UpdateUser($input: UpdateUserInput!) {
 `;
 
 export const FORGOT_PASSWORD = `
-mutation ForgotPassword($input: ForgotPasswordInput!) {
-  ForgotPassword(input: $input) {
+mutation($input: ForgotPasswordInput!) {
+  forgotPassword(input: $input) {
     message
   }
 }
 `;
 
 export const RESET_PASSWORD = `
-mutation ResetPassword($input: ResetPasswordInput!) {
-  ResetPassword(input: $input) {
+mutation($input: ResetPasswordInput!) {
+  resetPassword(input: $input) {
     message
   }
 }
 `;
 
 export const DELETE_USER = `
-mutation DeleteUser {
-  DeleteUser {
+mutation {
+  deleteUser {
     id
   }
 }
