@@ -285,6 +285,7 @@ it('able to reset password with correct token', async () => {
     variables: {
       input: {
         password: 'newpassword',
+        repeatPassword: 'newpassword',
         token: 'RESET-PASSWORD-TOKEN'
       }
     }
@@ -292,8 +293,25 @@ it('able to reset password with correct token', async () => {
 
   expect(res.data).toEqual({
     ResetPassword: {
-      message: 'Password updated successfully.'
+      message: 'Password updated successfully. You may now login with your new password.'
     }
+  });
+});
+
+it('not able to reset password with mismatched password', async () => {
+  const res = await graphqlRequest({
+    query: RESET_PASSWORD,
+    variables: {
+      input: {
+        password: 'newpassword',
+        repeatPassword: 'newpasswordtypo',
+        token: 'RESET-PASSWORD-TOKEN'
+      }
+    }
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    password: 'Repeated password does not match new password.'
   });
 });
 
@@ -302,7 +320,9 @@ it('not able to reset password with missing token', async () => {
     query: RESET_PASSWORD,
     variables: {
       input: {
-        password: 'newpassword'
+        password: 'newpassword',
+        repeatPassword: 'newpassword',
+        token: ''
       }
     }
   });
@@ -318,6 +338,7 @@ it('not able to reset password with wrong token', async () => {
     variables: {
       input: {
         password: 'newpassword',
+        repeatPassword: 'newpassword',
         token: 'RESET-PASSWORD-TOKEN-WRONG'
       }
     }

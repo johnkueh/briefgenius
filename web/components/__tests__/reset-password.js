@@ -6,7 +6,8 @@ import {
   cleanup,
   wait,
   waitForElement,
-  waitForDomChange
+  waitForDomChange,
+  getByTestId
 } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
@@ -14,10 +15,20 @@ afterEach(() => {
   cleanup();
 });
 
+it('displays go to login if no token', () => {
+  const handler = jest.fn();
+  const { container, getByTestId } = render(<ResetPassword onSubmit={handler} />);
+
+  expect(container).not.toHaveTextContent('Set a new password for your account');
+  expect(container).not.toHaveTextContent('New password');
+  expect(container).toHaveTextContent('Go to login');
+});
+
 it('displays success messages', () => {
   const handler = jest.fn();
   const { container, getByText } = render(
     <ResetPassword
+      token="aabbcc"
       messages={{ success: { password: 'Your password has been reset' } }}
       onSubmit={handler}
     />
@@ -32,6 +43,7 @@ it('displays error messages', () => {
   const handler = jest.fn();
   const { container, getByText } = render(
     <ResetPassword
+      token="aabbcc"
       messages={{ error: { password: 'New password is too short' } }}
       onSubmit={handler}
     />
@@ -41,12 +53,21 @@ it('displays error messages', () => {
   expect(alert.parentNode).toHaveClass('alert alert-error');
 });
 
+it('sets token', () => {
+  const handler = jest.fn();
+  const { container, getByTestId } = render(<ResetPassword token="aabbcc" onSubmit={handler} />);
+
+  expect(container.firstChild).toHaveFormValues({
+    token: 'aabbcc'
+  });
+});
+
 it('submits with correct data', async () => {
   const handler = jest.fn((_, { setSubmitting }) => {
     setSubmitting(false);
   });
   const { container, getByText, getByPlaceholderText } = render(
-    <ResetPassword onSubmit={handler} />
+    <ResetPassword token="aabbcc" onSubmit={handler} />
   );
   fireEvent.change(getByPlaceholderText('New password'), { target: { value: 'newpassword' } });
   fireEvent.change(getByPlaceholderText('Re-enter new password'), {
@@ -62,7 +83,7 @@ it('submits with correct data', async () => {
   expect(submitButton).toHaveAttribute('disabled');
   await wait(() => {
     expect(handler).toHaveBeenCalledWith(
-      { password: 'newpassword', repeatPassword: 'newpassword' },
+      { password: 'newpassword', repeatPassword: 'newpassword', token: 'aabbcc' },
       expect.objectContaining({ setSubmitting: expect.any(Function) })
     );
     expect(submitButton).not.toHaveAttribute('disabled');

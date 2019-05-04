@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
@@ -96,7 +97,16 @@ export default {
     async ResetPassword(parent, { input }, { prisma }, info) {
       await validate({ input, schema: validationSchema.resetPassword });
 
-      const { password, token } = input;
+      const { password, repeatPassword, token } = input;
+
+      if (password !== repeatPassword) {
+        throw new UserInputError('ValidationError', {
+          errors: {
+            password: 'Repeated password does not match new password.'
+          }
+        });
+      }
+
       const dbUser = await prisma.user({ resetPasswordToken: token });
 
       if (dbUser) {
@@ -109,7 +119,7 @@ export default {
         });
 
         return {
-          message: 'Password updated successfully.'
+          message: 'Password updated successfully. You may now login with your new password.'
         };
       }
 

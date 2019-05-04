@@ -1,4 +1,5 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { withRouter } from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
 import Layout from '../layouts/auth';
@@ -12,16 +13,26 @@ export const RESET_PASSWORD = gql`
   }
 `;
 
-const ResetPasswordPage = () => {
+const ResetPasswordPage = ({
+  router: {
+    query: { token: queryToken }
+  }
+}) => {
   const [messages, setMessages] = useState(null);
+  const [token, setToken] = useState('');
   const resetPassword = useMutation(RESET_PASSWORD);
+
+  useEffect(() => {
+    setToken(queryToken);
+  }, [queryToken]);
 
   return (
     <Layout>
       <ResetPassword
+        token={token}
         messages={messages}
         onSubmit={async (currentValues, { setSubmitting }) => {
-          const { password } = currentValues;
+          const { password, repeatPassword, token } = currentValues;
 
           try {
             const {
@@ -30,7 +41,7 @@ const ResetPasswordPage = () => {
               }
             } = await resetPassword({
               variables: {
-                input: { password }
+                input: { password, repeatPassword, token }
               }
             });
 
@@ -39,6 +50,8 @@ const ResetPasswordPage = () => {
                 password: message
               }
             });
+
+            setToken('');
 
             setSubmitting(false);
           } catch (error) {
@@ -53,4 +66,4 @@ const ResetPasswordPage = () => {
   );
 };
 
-export default ResetPasswordPage;
+export default withRouter(ResetPasswordPage);
