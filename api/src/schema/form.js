@@ -18,6 +18,7 @@ export default gql`
   }
 
   input UpdateFormInput {
+    id: String!
     name: String!
     logos: [String]
   }

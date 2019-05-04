@@ -147,3 +147,65 @@ it('able create a form', async () => {
     logos: []
   });
 });
+
+it('unable to create a form with invalid fields', async () => {
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      input: { name: '' }
+    },
+    query: `
+      mutation($input: CreateFormInput!) {
+        createForm(input: $input) {
+          name
+          logos {
+            assetId
+          }
+        }
+      }
+  `
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    name: 'Name must be at least 1 characters'
+  });
+});
+
+it('able to update a form with logos', async () => {
+  const form = await prisma.createForm({
+    name: 'Form 1',
+    user: {
+      connect: { id: user.id }
+    }
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      input: {
+        id: form.id,
+        name: 'An updated form',
+        logos: ['public-id-1', 'public-id-2']
+      }
+    },
+    query: `
+      mutation($input: UpdateFormInput!) {
+        updateForm(input: $input) {
+          name
+          logos {
+            assetId
+          }
+        }
+      }
+  `
+  });
+
+  expect(res.data.updateForm).toEqual({
+    name: 'An updated form',
+    logos: [{ assetId: 'public-id-1' }, { assetId: 'public-id-2' }]
+  });
+});

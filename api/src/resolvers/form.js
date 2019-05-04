@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import ValidationErrors from '../helpers/validation-errors';
-import form from '../schema/form';
 
 const fragment = `
   { 
@@ -29,6 +29,20 @@ export default {
           user: {
             connect: {
               id: user.id
+            }
+          }
+        })
+        .$fragment(fragment);
+    },
+    async updateForm(parent, { input }, { user, prisma }, info) {
+      const { id, name, logos } = input;
+      return prisma
+        .updateForm({
+          where: { id },
+          data: {
+            name,
+            logos: {
+              create: _.map(logos, assetId => ({ assetId }))
             }
           }
         })
