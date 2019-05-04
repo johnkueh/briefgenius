@@ -3,16 +3,16 @@ import * as yup from 'yup';
 
 export default gql`
   extend type Query {
-    Me: User @requireAuth
+    me: User @requireAuth
   }
 
   extend type Mutation {
-    Signup(input: SignupInput!): AuthPayload! @validateInput
-    Login(input: LoginInput!): AuthPayload! @validateInput
-    ForgotPassword(input: ForgotPasswordInput!): Result @validateInput
-    ResetPassword(input: ResetPasswordInput!): Result @validateInput
-    UpdateUser(input: UpdateUserInput!): User! @requireAuth @validateInput
-    DeleteUser: User! @requireAuth
+    signup(input: SignupInput!): AuthPayload! @validateInput
+    login(input: LoginInput!): AuthPayload! @validateInput
+    forgotPassword(input: ForgotPasswordInput!): Result @validateInput
+    resetPassword(input: ResetPasswordInput!): Result @validateInput
+    updateUser(input: UpdateUserInput!): User! @requireAuth @validateInput
+    deleteUser: User! @requireAuth
   }
 
   input SignupInput {
@@ -61,7 +61,7 @@ export default gql`
 `;
 
 export const validations = {
-  Signup: yup.object().shape({
+  signup: yup.object().shape({
     name: yup
       .string()
       .min(1)
@@ -72,27 +72,27 @@ export const validations = {
       .min(1),
     password: yup.string().min(6)
   }),
-  Login: yup.object().shape({
+  login: yup.object().shape({
     email: yup
       .string()
       .email()
       .min(1),
     password: yup.string().min(6)
   }),
-  ForgotPassword: yup.object().shape({
+  forgotPassword: yup.object().shape({
     email: yup
       .string()
       .email()
       .min(1)
   }),
-  ResetPassword: yup.object().shape({
+  resetPassword: yup.object().shape({
     token: yup.string().required('Password reset token is missing.'),
     password: yup
       .string()
       .required()
       .min(6)
   }),
-  UpdateUser: yup.object().shape({
+  updateUser: yup.object().shape({
     name: yup
       .string()
       .min(1)

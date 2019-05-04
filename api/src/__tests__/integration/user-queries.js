@@ -16,7 +16,7 @@ let jwt;
 beforeEach(async () => {
   ({
     data: {
-      Signup: { user, jwt }
+      signup: { user, jwt }
     }
   } = await graphqlRequest({
     query: SIGNUP,
@@ -42,7 +42,7 @@ it('able to get user profile', async () => {
     query: ME
   });
 
-  expect(res.data.Me).toEqual({
+  expect(res.data.me).toEqual({
     email: user.email,
     name: user.name
   });
@@ -63,7 +63,7 @@ it('able to login successfully', async () => {
   });
 
   expect(res.data).toEqual({
-    Login: expect.objectContaining({
+    login: expect.objectContaining({
       jwt: expect.any(String),
       user: {
         email: user.email,
@@ -86,7 +86,7 @@ it('able to signup successfully', async () => {
   });
 
   expect(res.data).toEqual({
-    Signup: expect.objectContaining({
+    signup: expect.objectContaining({
       jwt: expect.any(String),
       user: {
         email: 'new+test+user@test.com',
@@ -167,7 +167,7 @@ it('able to update user profile successfully', async () => {
   });
 
   expect(res.data).toEqual({
-    UpdateUser: {
+    updateUser: {
       email: 'updated+user@test.com',
       name: user.name
     }
@@ -188,7 +188,7 @@ it('able to update user password successfully', async () => {
   });
 
   expect(res.data).toEqual({
-    UpdateUser: {
+    updateUser: {
       email: 'test@user.com',
       name: user.name
     }
@@ -233,7 +233,7 @@ it('not able to request forgot password if user doesnt exist', async () => {
 
   // Sends this message back to the user irrespective of success or not
   expect(res.data).toEqual({
-    ForgotPassword: {
+    forgotPassword: {
       message: 'A link to reset your password will be sent to your registered email.'
     }
   });
@@ -268,7 +268,7 @@ it('able to request forgot password successfully', async () => {
 
   expect(sgMail.send).toHaveBeenCalled();
   expect(res.data).toEqual({
-    ForgotPassword: {
+    forgotPassword: {
       message: 'A link to reset your password will be sent to your registered email.'
     }
   });
@@ -292,7 +292,7 @@ it('able to reset password with correct token', async () => {
   });
 
   expect(res.data).toEqual({
-    ResetPassword: {
+    resetPassword: {
       message: 'Password updated successfully. You may now login with your new password.'
     }
   });

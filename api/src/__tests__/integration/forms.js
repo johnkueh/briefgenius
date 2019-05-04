@@ -1,5 +1,4 @@
 import { graphqlRequest, prisma } from '../../lib/test-util';
-import { SIGNUP } from '../../queries/user';
 
 let user;
 let jwt;
@@ -7,12 +6,12 @@ let jwt;
 beforeEach(async () => {
   ({
     data: {
-      Signup: { user, jwt }
+      signup: { user, jwt }
     }
   } = await graphqlRequest({
     query: `
-      mutation Signup($input: SignupInput!) {
-        Signup(input: $input) {
+      mutation signup($input: SignupInput!) {
+        signup(input: $input) {
           jwt
           user {
             id
