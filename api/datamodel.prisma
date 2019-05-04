@@ -6,7 +6,7 @@ type User {
   resetPasswordToken: String @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  forms: [Form!]
+  forms: [Form]
 }
 
 type Form {
@@ -15,6 +15,8 @@ type Form {
   logos: [Logo!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  user: User!
+  submissions: [Submission]
 }
 
 type Submission {
@@ -23,6 +25,7 @@ type Submission {
   logos: [Logo!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  form: Form!
 }
 
 type Logo {
