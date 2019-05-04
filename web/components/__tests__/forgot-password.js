@@ -1,4 +1,4 @@
-import RequestResetPassword from '../request-reset-password';
+import ForgotPassword from '../forgot-password';
 import React, { useContext } from 'react';
 import {
   render,
@@ -17,7 +17,7 @@ afterEach(() => {
 it('displays success messages', () => {
   const handler = jest.fn();
   const { container, getByText } = render(
-    <RequestResetPassword
+    <ForgotPassword
       messages={{ success: { email: 'We will send you a link to reset your password' } }}
       onSubmit={handler}
     />
@@ -31,10 +31,7 @@ it('displays success messages', () => {
 it('displays error messages', () => {
   const handler = jest.fn();
   const { container, getByText } = render(
-    <RequestResetPassword
-      messages={{ error: { email: 'Wrong email entered' } }}
-      onSubmit={handler}
-    />
+    <ForgotPassword messages={{ error: { email: 'Wrong email entered' } }} onSubmit={handler} />
   );
 
   const alert = getByText('Wrong email entered');
@@ -46,7 +43,7 @@ it('submits with correct data', async () => {
     setSubmitting(false);
   });
   const { container, getByText, getByPlaceholderText } = render(
-    <RequestResetPassword onSubmit={handler} />
+    <ForgotPassword onSubmit={handler} />
   );
   fireEvent.change(getByPlaceholderText('Email address'), { target: { value: 'test@user.com' } });
   const submitButton = getByText(/submit/i);

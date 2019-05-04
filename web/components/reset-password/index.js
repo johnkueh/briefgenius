@@ -7,7 +7,7 @@ import Alert from '../alert-messages';
 
 const ResetPassword = ({ messages, onSubmit }) => (
   <Formik initialValues={{ password: '', repeatPassword: '' }} onSubmit={onSubmit}>
-    {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+    {({ isSubmitting }) => (
       <Form className="mt-3">
         <Alert messages={messages} />
         <label className="mb-3">Set a new password for your account</label>

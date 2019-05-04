@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import Link from 'next/link';
 import Button from '../button';
-import Alert from '../alert';
+import Alert from '../alert-messages';
 
-const LogIn = ({ errors, onSubmit }) => (
+const LogIn = ({ messages, onSubmit }) => (
   <Formik initialValues={{ email: '', password: '' }} onSubmit={onSubmit}>
-    {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+    {({ isSubmitting }) => (
       <Form className="mt-3">
-        <Alert type="warning" messages={errors} />
+        <Alert messages={messages} />
         <Field
           autoFocus
           name="email"
@@ -54,6 +54,6 @@ const LogIn = ({ errors, onSubmit }) => (
 export default LogIn;
 
 LogIn.propTypes = {
-  errors: PropTypes.object,
+  messages: PropTypes.object,
   onSubmit: PropTypes.func.isRequired
 };

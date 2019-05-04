@@ -17,7 +17,7 @@ afterEach(() => {
 it('displays errors', () => {
   const handler = jest.fn();
   const { container } = render(
-    <Login errors={{ name: 'Too long', email: 'Not an email' }} onSubmit={handler} />
+    <Login messages={{ errors: { name: 'Too long', email: 'Not an email' } }} onSubmit={handler} />
   );
 
   expect(container).toHaveTextContent('Too long');

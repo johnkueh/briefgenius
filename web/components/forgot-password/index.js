@@ -6,9 +6,9 @@ import Link from 'next/link';
 import Button from '../button';
 import Alert from '../alert-messages';
 
-const RequestResetPassword = ({ messages, onSubmit }) => (
+const ForgotPassword = ({ messages, onSubmit }) => (
   <Formik initialValues={{ email: '' }} onSubmit={onSubmit}>
-    {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+    {({ isSubmitting }) => (
       <Form className="mt-3">
         <Alert messages={messages} />
         <label className="mb-3">Enter your email address to request for a password reset</label>
@@ -35,9 +35,9 @@ const RequestResetPassword = ({ messages, onSubmit }) => (
   </Formik>
 );
 
-export default RequestResetPassword;
+export default ForgotPassword;
 
-RequestResetPassword.propTypes = {
+ForgotPassword.propTypes = {
   messages: PropTypes.object,
   onSubmit: PropTypes.func.isRequired
 };

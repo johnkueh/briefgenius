@@ -3,7 +3,8 @@ import jsonwebtoken from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
 import { UserInputError, AuthenticationError } from 'apollo-server';
 import sendEmail from '../services/sendgrid';
-import { validateUser } from '../validators/user';
+import validationSchema from '../validators/user';
+import validate from '../validators/validate';
 
 export default {
   Query: {
@@ -13,13 +14,17 @@ export default {
   },
   Mutation: {
     async Signup(parent, { input }, { prisma }, info) {
-      await validateUser(input);
+      await validate({ input, schema: validationSchema.signup });
 
       const { name, email, password } = input;
       const existingUser = await prisma.user({ email });
 
       if (existingUser) {
-        throw new UserInputError('Email is already taken');
+        throw new UserInputError('ValidationError', {
+          errors: {
+            email: 'Email is already taken'
+          }
+        });
       } else {
         const user = await prisma.createUser({
           name,
@@ -36,14 +41,10 @@ export default {
         };
       }
     },
-    async Login(
-      parent,
-      {
-        input: { email, password }
-      },
-      { prisma },
-      info
-    ) {
+    async Login(parent, { input }, { prisma }, info) {
+      await validate({ input, schema: validationSchema.login });
+
+      const { email, password } = input;
       const user = await prisma.user({ email });
 
       if (user && bcrypt.compareSync(password, user.password)) {
@@ -56,20 +57,16 @@ export default {
         };
       }
 
-      throw new UserInputError('Authentication error', {
+      throw new UserInputError('ValidationError', {
         errors: {
           auth: 'Please check your credentials and try again.'
         }
       });
     },
-    async ForgotPassword(
-      parent,
-      {
-        input: { email }
-      },
-      { prisma },
-      info
-    ) {
+    async ForgotPassword(parent, { input }, { prisma }, info) {
+      await validate({ input, schema: validationSchema.forgotPassword });
+
+      const { email } = input;
       const user = await prisma.user({ email });
 
       if (user) {
@@ -96,14 +93,10 @@ export default {
         message: 'A link to reset your password will be sent to your registered email.'
       };
     },
-    async ResetPassword(
-      parent,
-      {
-        input: { password, token }
-      },
-      { prisma },
-      info
-    ) {
+    async ResetPassword(parent, { input }, { prisma }, info) {
+      await validate({ input, schema: validationSchema.resetPassword });
+
+      const { password, token } = input;
       const dbUser = await prisma.user({ resetPasswordToken: token });
 
       if (dbUser) {
@@ -120,10 +113,12 @@ export default {
         };
       }
 
-      throw new AuthenticationError('Password reset token is invalid.');
+      throw new UserInputError('ValidationError', {
+        errors: { token: 'Password reset token is invalid.' }
+      });
     },
     async UpdateUser(parent, { input }, { user, prisma }, info) {
-      await validateUser(input);
+      await validate({ input, schema: validationSchema.updateUser });
 
       const { name, email, password } = input;
 

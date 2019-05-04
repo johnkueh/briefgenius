@@ -19,14 +19,14 @@ const SIGNUP = gql`
 `;
 
 const SignupPage = () => {
-  const [errors, setErrors] = useState(null);
+  const [messages, setMessages] = useState(null);
   const signUp = useMutation(SIGNUP);
   const { setUser, setJwt, setIsLoggedIn } = useContext(AuthContext);
 
   return (
     <Layout>
       <Signup
-        errors={errors}
+        messages={messages}
         onSubmit={async ({ email, name, password }, { setSubmitting }) => {
           try {
             const {
@@ -45,7 +45,7 @@ const SignupPage = () => {
 
             Router.push('/forms');
           } catch (error) {
-            setErrors(error.graphQLErrors[0].extensions.exception.errors);
+            setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
             setSubmitting(false);
           }
         }}

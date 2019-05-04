@@ -147,7 +147,9 @@ describe('signup - validation errors', () => {
       }
     });
 
-    expect(res.errors[0].message).toBe('Email is already taken');
+    expect(res.errors[0].extensions.exception.errors).toEqual({
+      email: 'Email is already taken'
+    });
   });
 });
 
@@ -237,6 +239,23 @@ it('not able to request forgot password if user doesnt exist', async () => {
   });
 });
 
+it('not able to request forgot password if email is not an email', async () => {
+  const res = await graphqlRequest({
+    query: FORGOT_PASSWORD,
+    variables: {
+      input: {
+        email: 'dawdd'
+      }
+    }
+  });
+
+  expect(sgMail.send).not.toHaveBeenCalled();
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    email: 'Email must be a valid email'
+  });
+});
+
 it('able to request forgot password successfully', async () => {
   const res = await graphqlRequest({
     query: FORGOT_PASSWORD,
@@ -278,6 +297,21 @@ it('able to reset password with correct token', async () => {
   });
 });
 
+it('not able to reset password with missing token', async () => {
+  const res = await graphqlRequest({
+    query: RESET_PASSWORD,
+    variables: {
+      input: {
+        password: 'newpassword'
+      }
+    }
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    token: 'Password reset token is missing.'
+  });
+});
+
 it('not able to reset password with wrong token', async () => {
   const res = await graphqlRequest({
     query: RESET_PASSWORD,
@@ -289,7 +323,9 @@ it('not able to reset password with wrong token', async () => {
     }
   });
 
-  expect(res.errors[0].message).toBe('Password reset token is invalid.');
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    token: 'Password reset token is invalid.'
+  });
 });
 
 it('able to delete user successfully', async () => {

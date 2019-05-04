@@ -30,8 +30,8 @@ export default gql`
   }
 
   input ResetPasswordInput {
-    password: String!
-    token: String!
+    password: String
+    token: String
   }
 
   input UpdateUserInput {
