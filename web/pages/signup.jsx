@@ -7,8 +7,8 @@ import Layout from '../layouts/auth';
 import Signup from '../components/sign-up';
 
 const SIGNUP = gql`
-  mutation Signup($input: SignupInput!) {
-    Signup(input: $input) {
+  mutation($input: SignupInput!) {
+    signup(input: $input) {
       jwt
       user {
         name
@@ -31,7 +31,7 @@ const SignupPage = () => {
           try {
             const {
               data: {
-                Signup: { jwt, user }
+                signup: { jwt, user }
               }
             } = await signUp({
               variables: {

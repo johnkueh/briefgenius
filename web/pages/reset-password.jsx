@@ -6,8 +6,8 @@ import Layout from '../layouts/auth';
 import ResetPassword from '../components/reset-password';
 
 export const RESET_PASSWORD = gql`
-  mutation ResetPassword($input: ResetPasswordInput!) {
-    ResetPassword(input: $input) {
+  mutation($input: ResetPasswordInput!) {
+    resetPassword(input: $input) {
       message
     }
   }

@@ -9,7 +9,7 @@ import MainLayout from './main';
 
 const ME = gql`
   query {
-    Me {
+    me {
       name
       email
     }
