@@ -8,11 +8,8 @@ export default class RequireAuthDirective extends SchemaDirectiveVisitor {
       const [, , { prisma, user }] = args;
 
       if (user) {
-        const dbUser = await prisma.user({ id: user.id });
-        if (dbUser) {
-          const result = await resolve.apply(this, args);
-          return result;
-        }
+        const result = await resolve.apply(this, args);
+        return result;
       }
 
       throw new AuthenticationError('You must be authenticated to perform this action');

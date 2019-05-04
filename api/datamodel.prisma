@@ -6,17 +6,17 @@ type User {
   resetPasswordToken: String @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  forms: [Form]
+  forms: [Form] @relation(name: "UserForms", onDelete: CASCADE)
 }
 
 type Form {
   id: ID! @unique
   name: String!
-  logos: [Logo!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  user: User!
-  submissions: [Submission]
+  user: User @relation(name: "UserForms")
+  logos: [Logo] @relation(name: "FormLogos", onDelete: CASCADE)
+  submissions: [Submission] @relation(name: "FormSubmissions", onDelete: CASCADE)
 }
 
 type Submission {
@@ -25,7 +25,7 @@ type Submission {
   logos: [Logo!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  form: Form!
+  form: Form! @relation(name: "FormSubmissions")
 }
 
 type Logo {
@@ -33,5 +33,5 @@ type Logo {
   assetId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  user: User
+  form: Form @relation(name: "FormLogos")
 }
