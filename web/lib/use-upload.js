@@ -49,3 +49,9 @@ const widgetOptions = {
     }
   }
 };
+
+export default {
+  useUpload,
+  onEvent,
+  widgetOptions
+};

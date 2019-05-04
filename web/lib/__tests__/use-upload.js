@@ -10,6 +10,7 @@ it('it opens cloudinary widget on call', () => {
   const { openWidget } = useUpload(handleSuccess);
   openWidget();
 
+  expect(window.cloudinary.openUploadWidget).toBeCalledTimes(1);
   expect(window.cloudinary.openUploadWidget).toBeCalledWith(
     expect.any(Object),
     expect.any(Function)
