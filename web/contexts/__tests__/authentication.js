@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library';
+import { render, fireEvent, cleanup } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 import AuthProvider, { AuthContext } from '../authentication';
 
@@ -16,31 +16,35 @@ beforeEach(() => {
     ({ isLoggedIn, jwt, user, setIsLoggedIn, setJwt, setUser } = useContext(AuthContext));
     return (
       <div>
-        <a
+        <button
+          type="button"
           data-testid="login"
           onClick={() => {
             setIsLoggedIn(true);
           }}
         >
           Login
-        </a>
-        <a
+        </button>
+        <button
+          type="button"
           data-testid="logout"
           onClick={() => {
             setIsLoggedIn(false);
           }}
         >
           Logout
-        </a>
-        <a
+        </button>
+        <button
+          type="button"
           data-testid="set_jwt"
           onClick={() => {
             setJwt('fake-jwt');
           }}
         >
           Set JWT
-        </a>
-        <a
+        </button>
+        <button
+          type="button"
           data-testid="set_user"
           onClick={() => {
             setUser({
@@ -49,7 +53,7 @@ beforeEach(() => {
           }}
         >
           Set User
-        </a>
+        </button>
       </div>
     );
   };

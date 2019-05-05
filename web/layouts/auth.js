@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 
 const AuthLayout = ({ children }) => (
@@ -8,7 +9,7 @@ const AuthLayout = ({ children }) => (
         <div className="card border-0 p-4 bg-light">
           <div className="my-3 text-center">
             <Link href="/">
-              <a>
+              <a href="/">
                 <h3>briefgenius</h3>
               </a>
             </Link>
@@ -22,4 +23,6 @@ const AuthLayout = ({ children }) => (
 
 export default AuthLayout;
 
-AuthLayout.propTypes = {};
+AuthLayout.propTypes = {
+  children: PropTypes.node.isRequired
+};

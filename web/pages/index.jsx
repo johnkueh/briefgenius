@@ -1,5 +1,6 @@
-import Layout from '../layouts/main';
+import React from 'react';
 import Link from 'next/link';
+import Layout from '../layouts/main';
 
 const Home = () => {
   return (
@@ -10,12 +11,12 @@ const Home = () => {
         </Link>
         <div>
           <Link href="/signup">
-            <a>Sign up</a>
+            <a href="/signup">Sign up</a>
           </Link>
         </div>
         <div>
           <Link href="/login">
-            <a>Log in</a>
+            <a href="/login">Log in</a>
           </Link>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import Alert from '../alert-messages';
-import React, { useContext } from 'react';
-import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
+import React from 'react';
+import { render, cleanup } from 'react-testing-library';
+import Alert from '../alert-messages';
 
 afterEach(() => {
   cleanup();
@@ -14,7 +14,7 @@ it('does not render anything if empty', () => {
 });
 
 it('renders success alert type', () => {
-  const { container, getByText } = render(
+  const { getByText } = render(
     <Alert
       messages={{
         success: { email: 'Email is available!' }
@@ -28,7 +28,7 @@ it('renders success alert type', () => {
 });
 
 it('renders error alert type', () => {
-  const { container, getByText } = render(
+  const { getByText } = render(
     <Alert
       messages={{
         error: { name: 'Name is too long' }

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
 import Layout from '../layouts/auth';
