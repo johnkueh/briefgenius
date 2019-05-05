@@ -35,14 +35,14 @@ const LogIn = ({ messages, onSubmit }) => (
         </div>
         <div className="mt-3">
           <div>
-            Dont have an account?{' '}
+            Dont have an account?&nbsp;
             <Link href="/signup">
-              <a>Sign up</a>
+              <a href="/signup">Sign up</a>
             </Link>
           </div>
           <div className="mt-1">
             <Link href="/forgot-password">
-              <a>Forgot your password?</a>
+              <a href="/forgot-password">Forgot your password?</a>
             </Link>
           </div>
         </div>
@@ -54,6 +54,10 @@ const LogIn = ({ messages, onSubmit }) => (
 export default LogIn;
 
 LogIn.propTypes = {
-  messages: PropTypes.object,
+  messages: PropTypes.objectOf(PropTypes.object),
   onSubmit: PropTypes.func.isRequired
+};
+
+LogIn.defaultProps = {
+  messages: null
 };

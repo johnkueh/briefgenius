@@ -1,7 +1,7 @@
 import React from 'react';
 import * as RouterMock from 'next/router';
 import * as HooksMock from 'react-apollo-hooks';
-import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library';
+import { render, cleanup } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 import Layout from '../logged-in';
 import { AuthContext } from '../../contexts/authentication';

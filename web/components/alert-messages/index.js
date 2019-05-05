@@ -14,5 +14,14 @@ const AlertMessages = ({ messages }) => {
 export default AlertMessages;
 
 AlertMessages.propTypes = {
-  messages: PropTypes.object
+  messages: PropTypes.oneOfType([
+    PropTypes.shape({ danger: PropTypes.objectOf(PropTypes.string) }),
+    PropTypes.shape({ warning: PropTypes.objectOf(PropTypes.string) }),
+    PropTypes.shape({ success: PropTypes.objectOf(PropTypes.string) }),
+    PropTypes.shape({ info: PropTypes.objectOf(PropTypes.string) })
+  ])
+};
+
+AlertMessages.defaultProps = {
+  messages: null
 };

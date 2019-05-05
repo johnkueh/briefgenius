@@ -30,9 +30,9 @@ const SignUp = ({ messages, onSubmit }) => (
           </Button>
         </div>
         <div className="mt-3">
-          Have an account?{' '}
+          Have an account?&nbsp;
           <Link href="/login">
-            <a>Log in</a>
+            <a href="/login">Log in</a>
           </Link>
         </div>
       </Form>
@@ -43,6 +43,10 @@ const SignUp = ({ messages, onSubmit }) => (
 export default SignUp;
 
 SignUp.propTypes = {
-  messages: PropTypes.object,
+  messages: PropTypes.objectOf(PropTypes.object),
   onSubmit: PropTypes.func.isRequired
+};
+
+SignUp.defaultProps = {
+  messages: null
 };

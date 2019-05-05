@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
@@ -6,8 +7,8 @@ import Layout from '../layouts/auth';
 import ResetPassword from '../components/reset-password';
 
 export const RESET_PASSWORD = gql`
-  mutation ResetPassword($input: ResetPasswordInput!) {
-    ResetPassword(input: $input) {
+  mutation($input: ResetPasswordInput!) {
+    resetPassword(input: $input) {
       message
     }
   }
@@ -32,7 +33,7 @@ const ResetPasswordPage = ({
         token={token}
         messages={messages}
         onSubmit={async (currentValues, { setSubmitting }) => {
-          const { password, repeatPassword, token } = currentValues;
+          const { password, repeatPassword, token: tokenValue } = currentValues;
 
           try {
             const {
@@ -41,7 +42,7 @@ const ResetPasswordPage = ({
               }
             } = await resetPassword({
               variables: {
-                input: { password, repeatPassword, token }
+                input: { password, repeatPassword, tokenValue }
               }
             });
 
@@ -67,3 +68,7 @@ const ResetPasswordPage = ({
 };
 
 export default withRouter(ResetPasswordPage);
+
+ResetPasswordPage.propTypes = {
+  router: PropTypes.objectOf(PropTypes.object).isRequired
+};

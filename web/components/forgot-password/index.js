@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
@@ -11,8 +10,9 @@ const ForgotPassword = ({ messages, onSubmit }) => (
     {({ isSubmitting }) => (
       <Form className="mt-3">
         <Alert messages={messages} />
-        <label className="mb-3">Enter your email address to request for a password reset</label>
+        <p className="mb-3">Enter your email address to request for a password reset</p>
         <Field
+          id="email"
           name="email"
           autoFocus
           className="form-control mb-3"
@@ -25,9 +25,9 @@ const ForgotPassword = ({ messages, onSubmit }) => (
           </Button>
         </div>
         <div className="mt-3">
-          Dont have an account?{' '}
+          Dont have an account?&nbsp;
           <Link href="/signup">
-            <a>Sign up</a>
+            <a href="/signup">Sign up</a>
           </Link>
         </div>
       </Form>
@@ -38,6 +38,10 @@ const ForgotPassword = ({ messages, onSubmit }) => (
 export default ForgotPassword;
 
 ForgotPassword.propTypes = {
-  messages: PropTypes.object,
+  messages: PropTypes.objectOf(PropTypes.object),
   onSubmit: PropTypes.func.isRequired
+};
+
+ForgotPassword.defaultProps = {
+  messages: null
 };

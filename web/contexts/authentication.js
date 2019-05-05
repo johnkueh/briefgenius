@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react';
+import PropTypes from 'prop-types';
 import { getItem, setItem } from '../lib/local-storage';
 
 // For server side vs client side in next.js
@@ -44,7 +45,7 @@ const reducer = (state, action) => {
 
 export const AuthContext = React.createContext(initialState);
 
-export default ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
@@ -65,4 +66,10 @@ export default ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+export default AuthProvider;
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
 };

@@ -21,5 +21,9 @@ export default Alert;
 
 Alert.propTypes = {
   type: PropTypes.string.isRequired,
-  messages: PropTypes.object
+  messages: PropTypes.objectOf(PropTypes.string)
+};
+
+Alert.defaultProps = {
+  messages: null
 };

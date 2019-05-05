@@ -1,12 +1,12 @@
-import { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
 import Layout from '../layouts/auth';
 import ForgotPassword from '../components/forgot-password';
 
 export const FORGOT_PASSWORD = gql`
-  mutation ForgotPassword($input: ForgotPasswordInput!) {
-    ForgotPassword(input: $input) {
+  mutation($input: ForgotPasswordInput!) {
+    forgotPassword(input: $input) {
       message
     }
   }
@@ -26,7 +26,7 @@ const ForgotPasswordPage = () => {
           try {
             const {
               data: {
-                ForgotPassword: { message }
+                forgotPassword: { message }
               }
             } = await forgotPassword({
               variables: {

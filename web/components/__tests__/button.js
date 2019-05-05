@@ -1,7 +1,7 @@
-import Button from '../button';
-import React, { useContext } from 'react';
-import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
+import React from 'react';
+import { render, cleanup } from 'react-testing-library';
+import Button from '../button';
 
 afterEach(() => {
   cleanup();
@@ -34,7 +34,7 @@ it('renders normal state by default', () => {
 
 it('renders loading state', () => {
   const { container } = render(
-    <Button loading={true} loadingText="Submitting..." className="btn btn-primary">
+    <Button loading loadingText="Submitting..." className="btn btn-primary">
       Log in
     </Button>
   );
@@ -46,7 +46,7 @@ it('renders loading state', () => {
 
 it('renders loading state, loadingText not provided', () => {
   const { container } = render(
-    <Button loading={true} className="btn btn-primary">
+    <Button loading className="btn btn-primary">
       Submit
     </Button>
   );
@@ -57,7 +57,7 @@ it('renders loading state, loadingText not provided', () => {
 
 it('disabled props takes precedence over loading', () => {
   const { container } = render(
-    <Button loading={false} disabled={true} className="btn btn-primary">
+    <Button loading={false} disabled className="btn btn-primary">
       Submit
     </Button>
   );

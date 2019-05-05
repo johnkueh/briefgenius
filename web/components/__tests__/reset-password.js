@@ -1,15 +1,7 @@
-import ResetPassword from '../reset-password';
-import React, { useContext } from 'react';
-import {
-  render,
-  fireEvent,
-  cleanup,
-  wait,
-  waitForElement,
-  waitForDomChange,
-  getByTestId
-} from 'react-testing-library';
 import 'jest-dom/extend-expect';
+import React from 'react';
+import { render, fireEvent, cleanup, wait } from 'react-testing-library';
+import ResetPassword from '../reset-password';
 
 afterEach(() => {
   cleanup();
@@ -17,7 +9,7 @@ afterEach(() => {
 
 it('displays go to login if no token', () => {
   const handler = jest.fn();
-  const { container, getByTestId } = render(<ResetPassword onSubmit={handler} />);
+  const { container } = render(<ResetPassword onSubmit={handler} />);
 
   expect(container).not.toHaveTextContent('Set a new password for your account');
   expect(container).not.toHaveTextContent('New password');
@@ -26,7 +18,7 @@ it('displays go to login if no token', () => {
 
 it('displays success messages', () => {
   const handler = jest.fn();
-  const { container, getByText } = render(
+  const { getByText } = render(
     <ResetPassword
       token="aabbcc"
       messages={{ success: { password: 'Your password has been reset' } }}
@@ -41,7 +33,7 @@ it('displays success messages', () => {
 
 it('displays error messages', () => {
   const handler = jest.fn();
-  const { container, getByText } = render(
+  const { getByText } = render(
     <ResetPassword
       token="aabbcc"
       messages={{ error: { password: 'New password is too short' } }}
@@ -55,7 +47,7 @@ it('displays error messages', () => {
 
 it('sets token', () => {
   const handler = jest.fn();
-  const { container, getByTestId } = render(<ResetPassword token="aabbcc" onSubmit={handler} />);
+  const { container } = render(<ResetPassword token="aabbcc" onSubmit={handler} />);
 
   expect(container.firstChild).toHaveFormValues({
     token: 'aabbcc'

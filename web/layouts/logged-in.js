@@ -1,4 +1,5 @@
-import { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 import Router from 'next/router';
 import gql from 'graphql-tag';
@@ -9,7 +10,7 @@ import MainLayout from './main';
 
 const ME = gql`
   query {
-    Me {
+    me {
       name
       email
     }
@@ -33,15 +34,20 @@ const LoggedInLayout = ({ children }) => {
     return (
       <MainLayout>
         <Link href="/">
-          <a>
+          <a href="/">
             <h3>briefgenius</h3>
           </a>
         </Link>
         <div className="my-5">{children}</div>
         <Link href="/logout">
-          <a>Logout</a>
-        </Link>{' '}
-        ({email})
+          <a href="/logout">Logout</a>
+        </Link>
+        &nbsp;
+        <span>
+          &#40;
+          {email}
+          &#41;
+        </span>
       </MainLayout>
     );
   }
@@ -50,11 +56,11 @@ const LoggedInLayout = ({ children }) => {
     return <PageLoading />;
   }
 
-  if (!loading && !isLoggedIn) {
-    return null;
-  }
+  return null;
 };
 
 export default LoggedInLayout;
 
-LoggedInLayout.propTypes = {};
+LoggedInLayout.propTypes = {
+  children: PropTypes.node.isRequired
+};

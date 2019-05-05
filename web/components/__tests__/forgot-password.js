@@ -1,14 +1,7 @@
-import ForgotPassword from '../forgot-password';
-import React, { useContext } from 'react';
-import {
-  render,
-  fireEvent,
-  cleanup,
-  wait,
-  waitForElement,
-  waitForDomChange
-} from 'react-testing-library';
 import 'jest-dom/extend-expect';
+import React from 'react';
+import { render, fireEvent, cleanup, wait } from 'react-testing-library';
+import ForgotPassword from '../forgot-password';
 
 afterEach(() => {
   cleanup();
@@ -16,7 +9,7 @@ afterEach(() => {
 
 it('displays success messages', () => {
   const handler = jest.fn();
-  const { container, getByText } = render(
+  const { getByText } = render(
     <ForgotPassword
       messages={{ success: { email: 'We will send you a link to reset your password' } }}
       onSubmit={handler}
@@ -30,7 +23,7 @@ it('displays success messages', () => {
 
 it('displays error messages', () => {
   const handler = jest.fn();
-  const { container, getByText } = render(
+  const { getByText } = render(
     <ForgotPassword messages={{ error: { email: 'Wrong email entered' } }} onSubmit={handler} />
   );
 

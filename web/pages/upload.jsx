@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Image, Transformation } from 'cloudinary-react';
 import { useUpload } from '../lib/use-upload';
 
@@ -10,7 +10,9 @@ const Upload = () => {
 
   return (
     <div>
-      <button onClick={openWidget}>Upload</button>
+      <button type="button" onClick={openWidget}>
+        Upload
+      </button>
       <div>
         {image && (
           <Image publicId={image}>

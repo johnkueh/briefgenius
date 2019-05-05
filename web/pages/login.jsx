@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import Router from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
@@ -7,8 +7,8 @@ import Layout from '../layouts/auth';
 import Login from '../components/log-in';
 
 const LOGIN = gql`
-  mutation Login($input: LoginInput!) {
-    Login(input: $input) {
+  mutation($input: LoginInput!) {
+    login(input: $input) {
       jwt
       user {
         name
@@ -31,7 +31,7 @@ const LoginPage = () => {
           try {
             const {
               data: {
-                Login: { jwt, user }
+                login: { jwt, user }
               }
             } = await login({
               variables: {

@@ -1,3 +1,4 @@
+import React from 'react';
 import _ from 'lodash';
 import Link from 'next/link';
 import Layout from '../../layouts/logged-in';
@@ -9,7 +10,7 @@ const NewForm = () => {
         <div className="col-md-8">
           <div className="mb-3">
             <Link href="/forms">
-              <a>Back to all forms</a>
+              <a href="/forms">Back to all forms</a>
             </Link>
           </div>
           <h2 className="mb-5">Add a new form</h2>
@@ -19,28 +20,32 @@ const NewForm = () => {
           <div className="logos">
             {mockLogos.map(logo => (
               <div>
-                <label>
-                  <input type="checkbox" />
-                  <img key={logo.url} src={logo.url} />
+                <label htmlFor="logo">
+                  <input name="logo" type="checkbox" />
+                  <img alt="logo" key={logo.url} src={logo.url} />
                 </label>
               </div>
             ))}
           </div>
           <Link href="/forms/new">
-            <a className="mt-5 btn btn-primary">Create form</a>
+            <a href="/forms/new" className="mt-5 btn btn-primary">
+              Create form
+            </a>
           </Link>
         </div>
       </div>
-      <style jsx>{`
-        img {
-          width: 150px;
-          margin: 10px;
-        }
-        .logos {
-          display: inline-flex;
-          flex-wrap: wrap;
-        }
-      `}</style>
+      <style jsx>
+        {`
+          img {
+            width: 150px;
+            margin: 10px;
+          }
+          .logos {
+            display: inline-flex;
+            flex-wrap: wrap;
+          }
+        `}
+      </style>
     </Layout>
   );
 };
