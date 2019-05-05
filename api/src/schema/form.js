@@ -1,5 +1,7 @@
 import { gql } from 'apollo-server-express';
 import * as yup from 'yup';
+import { rule, shield, and, or, not } from 'graphql-shield';
+import ValidationErrors from '../helpers/validation-errors';
 
 export default gql`
   extend type Query {
@@ -46,3 +48,30 @@ export const validations = {
     logos: yup.array().of(yup.string().min(1))
   })
 };
+
+const userOwnForm = rule()(async (parent, args, ctx, info) => {
+  const { id } = args;
+  const { user, prisma } = ctx;
+
+  const forms = await prisma.forms({
+    where: {
+      id,
+      user: {
+        id: user.id
+      }
+    }
+  });
+
+  if (forms.length > 0) return true;
+
+  return ValidationErrors({
+    auth: 'Not authorised!'
+  });
+});
+
+export const permissions = shield({
+  Mutation: {
+    updateForm: userOwnForm,
+    deleteForm: userOwnForm
+  }
+});

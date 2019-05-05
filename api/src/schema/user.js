@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server-express';
 import * as yup from 'yup';
+import { rule, shield, and, or, not } from 'graphql-shield';
 
 export default gql`
   extend type Query {
@@ -104,3 +105,9 @@ export const validations = {
     password: yup.string().min(6)
   })
 };
+
+export const permissions = shield({
+  Query: {
+    me: true
+  }
+});

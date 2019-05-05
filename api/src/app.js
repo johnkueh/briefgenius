@@ -8,6 +8,7 @@ import typeDefs, { validationSchema } from './schema';
 import resolvers from './resolvers';
 import schemaDirectives from './directives';
 import { validations } from './middlewares/validations';
+import { permissions } from './middlewares/permissions';
 
 const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
 dotenv.config({ path: envFile });
@@ -23,6 +24,7 @@ app.use(
 
 const schema = applyMiddleware(
   makeExecutableSchema({ typeDefs, resolvers, schemaDirectives }),
+  ...permissions,
   validations
 );
 
