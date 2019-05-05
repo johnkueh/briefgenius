@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import { UserInputError } from 'apollo-server';
+import { UserInputError, SchemaDirectiveVisitor } from 'apollo-server';
 import { defaultFieldResolver } from 'graphql';
-import { SchemaDirectiveVisitor, AuthenticationError } from 'apollo-server';
 
 export default class ValidateInputDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field) {
