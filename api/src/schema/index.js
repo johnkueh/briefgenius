@@ -8,7 +8,6 @@ const linkSchema = gql`
 
   directive @requireAuth on FIELD_DEFINITION
   directive @computed(value: String) on FIELD_DEFINITION
-  directive @validateInput on FIELD_DEFINITION
 
   type Query {
     _: Boolean
