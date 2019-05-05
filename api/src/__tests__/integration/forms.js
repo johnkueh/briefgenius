@@ -209,3 +209,32 @@ it('able to update a form with logos', async () => {
     logos: [{ assetId: 'public-id-1' }, { assetId: 'public-id-2' }]
   });
 });
+
+it('able to delete own form', async () => {
+  const form = await prisma.createForm({
+    name: 'Form 1',
+    user: {
+      connect: { id: user.id }
+    }
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      id: form.id
+    },
+    query: `
+      mutation($id: String!) {
+        deleteForm(id: $id) {
+          name
+        }
+      }
+  `
+  });
+
+  expect(res.data.deleteForm).toEqual({
+    name: 'Form 1'
+  });
+});

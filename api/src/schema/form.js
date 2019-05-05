@@ -10,7 +10,7 @@ export default gql`
   extend type Mutation {
     createForm(input: CreateFormInput!): Form! @requireAuth
     updateForm(input: UpdateFormInput!): Form! @requireAuth
-    deleteForm: Form! @requireAuth
+    deleteForm(id: String!): Form! @requireAuth
   }
 
   input CreateFormInput {
