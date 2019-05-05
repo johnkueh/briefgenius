@@ -19,7 +19,11 @@ export const app = express();
 
 app.use(
   // https://github.com/auth0/express-jwt/issues/194
-  jwt({ secret: process.env.JWT_SECRET, credentialsRequired: false })
+  jwt({ secret: process.env.JWT_SECRET, credentialsRequired: false }),
+  (err, req, res, next) => {
+    if (err.code === 'invalid_token') return next();
+    return next(err);
+  }
 );
 
 const schema = applyMiddleware(
