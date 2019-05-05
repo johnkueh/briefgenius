@@ -1,9 +1,26 @@
-import React from 'react';
-import _ from 'lodash';
+import React, { useState } from 'react';
+import gql from 'graphql-tag';
+import { useMutation } from 'react-apollo-hooks';
+import Router from 'next/router';
 import Link from 'next/link';
+import { FORMS } from '../forms';
+import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 
+export const CREATE_FORM = gql`
+  mutation($input: CreateFormInput!) {
+    createForm(input: $input) {
+      id
+      name
+    }
+  }
+`;
+
 const NewForm = () => {
+  const [name, setName] = useState('');
+  const [messages, setMessages] = useState(null);
+  const create = useMutation(CREATE_FORM);
+
   return (
     <Layout>
       <div className="row">
@@ -13,44 +30,49 @@ const NewForm = () => {
               <a href="/forms">Back to all forms</a>
             </Link>
           </div>
-          <h2 className="mb-5">Add a new form</h2>
+          <h2 className="mb-3">Add a new form</h2>
+          <Alert messages={messages} />
           <p className="text-muted">What should we call this form?</p>
-          <input type="text" className="form-control mb-3" />
-          <p className="text-muted">Select logos</p>
-          <div className="logos">
-            {mockLogos.map(logo => (
-              <div>
-                <label htmlFor="logo">
-                  <input name="logo" type="checkbox" />
-                  <img alt="logo" key={logo.url} src={logo.url} />
-                </label>
-              </div>
-            ))}
-          </div>
-          <Link href="/forms/new">
-            <a href="/forms/new" className="mt-5 btn btn-primary">
+          <form
+            onSubmit={async e => {
+              e.preventDefault();
+              try {
+                await create({
+                  variables: {
+                    input: {
+                      name
+                    }
+                  },
+                  update: (cache, { data: { createForm } }) => {
+                    const { forms } = cache.readQuery({ query: FORMS });
+                    cache.writeQuery({
+                      query: FORMS,
+                      data: {
+                        forms: forms.concat([createForm])
+                      }
+                    });
+                  }
+                });
+                Router.push('/forms');
+              } catch (error) {
+                setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+              }
+            }}
+          >
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              type="text"
+              className="form-control mb-3"
+            />
+            <button type="submit" className="mt-3 btn btn-primary">
               Create form
-            </a>
-          </Link>
+            </button>
+          </form>
         </div>
       </div>
-      <style jsx>
-        {`
-          img {
-            width: 150px;
-            margin: 10px;
-          }
-          .logos {
-            display: inline-flex;
-            flex-wrap: wrap;
-          }
-        `}
-      </style>
     </Layout>
   );
 };
 
-const mockLogos = _.times(10, i => ({
-  url: `https://via.placeholder.com/400x200?text=Logo+${i + 1}`
-}));
 export default NewForm;
