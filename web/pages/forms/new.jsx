@@ -43,15 +43,7 @@ const NewForm = () => {
                       name
                     }
                   },
-                  update: (cache, { data: { createForm } }) => {
-                    const { forms } = cache.readQuery({ query: FORMS });
-                    cache.writeQuery({
-                      query: FORMS,
-                      data: {
-                        forms: forms.concat([createForm])
-                      }
-                    });
-                  }
+                  refetchQueries: [{ query: FORMS }]
                 });
                 Router.push('/forms');
               } catch (error) {
