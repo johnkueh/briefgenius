@@ -35,7 +35,7 @@ afterEach(async () => {
   await prisma.deleteManyUsers();
 });
 
-it('able to get all forms', async () => {
+it('able to get only forms for user', async () => {
   await prisma.createForm({
     name: 'Form 1',
     user: {
@@ -55,6 +55,10 @@ it('able to get all forms', async () => {
     user: {
       connect: { id: user.id }
     }
+  });
+
+  await prisma.createForm({
+    name: 'Form not from user'
   });
 
   const res = await graphqlRequest({
