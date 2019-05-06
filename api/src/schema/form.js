@@ -1,5 +1,7 @@
 import { gql } from 'apollo-server-express';
 import * as yup from 'yup';
+import { rule, shield, and, or, not } from 'graphql-shield';
+import ValidationErrors from '../helpers/validation-errors';
 
 export default gql`
   extend type Query {
@@ -8,9 +10,9 @@ export default gql`
   }
 
   extend type Mutation {
-    createForm(input: CreateFormInput!): Form! @requireAuth @validateInput
-    updateForm(input: UpdateFormInput!): Form! @requireAuth @validateInput
-    deleteForm: Form! @requireAuth
+    createForm(input: CreateFormInput!): Form! @requireAuth
+    updateForm(input: UpdateFormInput!): Form! @requireAuth
+    deleteForm(id: String!): Form! @requireAuth
   }
 
   input CreateFormInput {
@@ -19,7 +21,7 @@ export default gql`
 
   input UpdateFormInput {
     id: String!
-    name: String!
+    name: String
     logos: [String]
   }
 
@@ -46,3 +48,28 @@ export const validations = {
     logos: yup.array().of(yup.string().min(1))
   })
 };
+
+const userOwnForm = rule()(async (parent, args, ctx, info) => {
+  const { id } = args;
+  const { user, prisma } = ctx;
+
+  const exists = await prisma.$exists.form({
+    id,
+    user: {
+      id: user.id
+    }
+  });
+
+  if (exists) return true;
+
+  return ValidationErrors({
+    auth: 'Not authorised!'
+  });
+});
+
+export const permissions = shield({
+  Mutation: {
+    updateForm: userOwnForm,
+    deleteForm: userOwnForm
+  }
+});

@@ -33,9 +33,11 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await prisma.deleteManyUsers();
+  await prisma.deleteManyForms();
+  await prisma.deleteManyLogoes();
 });
 
-it('able to get all forms', async () => {
+it('able to get only forms for user', async () => {
   await prisma.createForm({
     name: 'Form 1',
     user: {
@@ -55,6 +57,10 @@ it('able to get all forms', async () => {
     user: {
       connect: { id: user.id }
     }
+  });
+
+  await prisma.createForm({
+    name: 'Form not from user'
   });
 
   const res = await graphqlRequest({
@@ -207,5 +213,93 @@ it('able to update a form with logos', async () => {
   expect(res.data.updateForm).toEqual({
     name: 'An updated form',
     logos: [{ assetId: 'public-id-1' }, { assetId: 'public-id-2' }]
+  });
+});
+
+it('not able to update not own form', async () => {
+  const form = await prisma.createForm({
+    name: 'Form 1'
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      input: {
+        id: form.id,
+        name: 'An updated form',
+        logos: ['public-id-1', 'public-id-2']
+      }
+    },
+    query: `
+      mutation($input: UpdateFormInput!) {
+        updateForm(input: $input) {
+          name
+          logos {
+            assetId
+          }
+        }
+      }
+  `
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    auth: 'Not authorised!'
+  });
+});
+
+it('able to delete own form', async () => {
+  const form = await prisma.createForm({
+    name: 'Form 1',
+    user: {
+      connect: { id: user.id }
+    }
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      id: form.id
+    },
+    query: `
+      mutation($id: String!) {
+        deleteForm(id: $id) {
+          name
+        }
+      }
+  `
+  });
+
+  expect(res.data.deleteForm).toEqual({
+    name: 'Form 1'
+  });
+});
+
+it('not able to delete not own form', async () => {
+  const form = await prisma.createForm({
+    name: 'Form 3'
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      id: form.id
+    },
+    query: `
+      mutation($id: String!) {
+        deleteForm(id: $id) {
+          name
+        }
+      }
+  `
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    auth: 'Not authorised!'
   });
 });

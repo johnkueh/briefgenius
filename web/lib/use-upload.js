@@ -21,8 +21,8 @@ const widgetOptions = {
   uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
   sources: ['local', 'url', 'camera', 'image_search', 'facebook', 'dropbox', 'instagram'],
   showAdvancedOptions: false,
-  cropping: true,
-  multiple: false,
+  // cropping: true,
+  multiple: true,
   defaultSource: 'local',
   styles: {
     palette: {

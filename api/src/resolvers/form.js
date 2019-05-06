@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import ValidationErrors from '../helpers/validation-errors';
 
 const fragment = `
   { 
@@ -47,6 +46,9 @@ export default {
           }
         })
         .$fragment(fragment);
+    },
+    async deleteForm(parent, { id }, { user, prisma }, info) {
+      return prisma.deleteForm({ id }).$fragment(fragment);
     }
   }
 };
