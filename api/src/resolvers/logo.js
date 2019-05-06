@@ -1,6 +1,9 @@
+import cloudinary from 'cloudinary';
+
 export default {
   Mutation: {
-    async deleteLogo(parent, { assetId }, { user, prisma }, info) {
+    deleteLogo(parent, { assetId }, { user, prisma }, info) {
+      cloudinary.uploader.destroy(assetId);
       return prisma.deleteLogo({ assetId });
     }
   }

@@ -1,3 +1,4 @@
+import cloudinaryMock from 'cloudinary';
 import { graphqlRequest, prisma } from '../../lib/test-util';
 
 let user;
@@ -71,6 +72,8 @@ it('able to delete own logos', async () => {
   `
   });
 
+  expect(cloudinaryMock.uploader.destroy).toBeCalledWith('public-id-1');
+
   const res = await graphqlRequest({
     headers: {
       Authorization: `Bearer ${jwt}`
@@ -133,6 +136,8 @@ it('not able to delete other forms logos', async () => {
       }
   `
   });
+
+  expect(cloudinaryMock.uploader.destroy).not.toBeCalled();
 
   expect(res.errors[0].extensions.exception.errors).toEqual({
     auth: 'Not authorised!'
