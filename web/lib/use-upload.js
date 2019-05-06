@@ -1,6 +1,8 @@
 export const useUpload = () => {
-  return onUpload => {
-    cloudinary.openUploadWidget(widgetOptions, onEvent.bind(this, onUpload));
+  return {
+    openWidget: ({ onUpload } = {}) => {
+      cloudinary.openUploadWidget(widgetOptions, onEvent.bind(this, onUpload));
+    }
   };
 };
 

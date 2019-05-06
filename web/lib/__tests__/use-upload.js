@@ -5,7 +5,24 @@ it('it opens cloudinary widget on call', () => {
     openUploadWidget: jest.fn()
   };
 
-  const openWidget = useUpload();
+  const { openWidget } = useUpload();
+  openWidget({
+    onUpload: jest.fn()
+  });
+
+  expect(window.cloudinary.openUploadWidget).toBeCalledTimes(1);
+  expect(window.cloudinary.openUploadWidget).toBeCalledWith(
+    expect.any(Object),
+    expect.any(Function)
+  );
+});
+
+it('it opens cloudinary widget without callback', () => {
+  window.cloudinary = {
+    openUploadWidget: jest.fn()
+  };
+
+  const { openWidget } = useUpload();
   openWidget();
 
   expect(window.cloudinary.openUploadWidget).toBeCalledTimes(1);

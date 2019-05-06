@@ -27,7 +27,7 @@ const FormEdit = ({
   const updateForm = useMutation(UPDATE_FORM);
   const deleteForm = useMutation(DELETE_FORM);
   const deleteLogo = useMutation(DELETE_LOGO);
-  const openWidget = useUpload();
+  const { openWidget } = useUpload();
 
   if (!form) return null;
 
