@@ -5,9 +5,7 @@ it('it opens cloudinary widget on call', () => {
     openUploadWidget: jest.fn()
   };
 
-  const handleSuccess = jest.fn();
-
-  const { openWidget } = useUpload(handleSuccess);
+  const openWidget = useUpload();
   openWidget();
 
   expect(window.cloudinary.openUploadWidget).toBeCalledTimes(1);

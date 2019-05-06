@@ -22,26 +22,12 @@ const FormEdit = ({
   const [deleting, setDeleting] = useState(false);
   const [messages, setMessages] = useState(null);
   const {
-    data: { form },
-    loading
+    data: { form }
   } = useQuery(FORM, { variables: { id } });
   const updateForm = useMutation(UPDATE_FORM);
   const deleteForm = useMutation(DELETE_FORM);
   const deleteLogo = useMutation(DELETE_LOGO);
-  const { openWidget } = useUpload(async publicId => {
-    try {
-      await updateForm({
-        variables: {
-          input: {
-            id,
-            logos: [publicId]
-          }
-        }
-      });
-    } catch (error) {
-      setMessages(parseError(error));
-    }
-  });
+  const openWidget = useUpload();
 
   if (!form) return null;
 
@@ -74,7 +60,28 @@ const FormEdit = ({
               <Form>
                 <Field name="name" className="form-control mb-3" type="text" />
                 <div>
-                  <button className="px-0 btn btn-link" type="button" onClick={openWidget}>
+                  <button
+                    className="px-0 btn btn-link"
+                    type="button"
+                    onClick={() => {
+                      openWidget({
+                        onUpload: async publicId => {
+                          try {
+                            await updateForm({
+                              variables: {
+                                input: {
+                                  id,
+                                  logos: [publicId]
+                                }
+                              }
+                            });
+                          } catch (error) {
+                            setMessages(parseError(error));
+                          }
+                        }
+                      });
+                    }}
+                  >
                     Upload logos
                   </button>
                   <div className="d-flex flex-wrap">
