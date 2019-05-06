@@ -17,7 +17,6 @@ export const FORMS = gql`
 const FormsPage = () => {
   const {
     data: { forms },
-    error,
     loading
   } = useQuery(FORMS);
 

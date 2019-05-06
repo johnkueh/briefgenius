@@ -5,36 +5,14 @@ import { useQuery, useMutation } from 'react-apollo-hooks';
 import Link from 'next/link';
 import { Image, Transformation } from 'cloudinary-react';
 import { withRouter } from 'next/router';
+import { FORMS } from '../forms';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 import { useUpload } from '../../lib/use-upload';
 
-export const FORM = gql`
-  query($id: String!) {
-    form(id: $id) {
-      id
-      name
-      logos {
-        assetId
-      }
-    }
-  }
-`;
-
-export const UPDATE_FORM = gql`
-  mutation($input: UpdateFormInput!) {
-    updateForm(input: $input) {
-      id
-      name
-      logos {
-        assetId
-      }
-    }
-  }
-`;
-
 const FormEdit = ({
   router: {
+    push,
     query: { id }
   }
 }) => {
@@ -43,15 +21,17 @@ const FormEdit = ({
     loading
   } = useQuery(FORM, { variables: { id } });
   const [name, setName] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const [messages, setMessages] = useState(null);
-  const update = useMutation(UPDATE_FORM);
+  const updateForm = useMutation(UPDATE_FORM);
+  const deleteForm = useMutation(DELETE_FORM);
+
   const { openWidget } = useUpload(async publicId => {
     try {
-      await update({
+      await updateForm({
         variables: {
           input: {
             id,
-            name,
             logos: [publicId]
           }
         }
@@ -79,7 +59,7 @@ const FormEdit = ({
             onSubmit={async e => {
               e.preventDefault();
               try {
-                await update({
+                await updateForm({
                   variables: {
                     input: {
                       id,
@@ -106,16 +86,33 @@ const FormEdit = ({
                 {form.logos &&
                   form.logos.map(({ assetId }) => (
                     <div key={assetId}>
-                      <Image width="400" className="mr-2 mb-2" publicId={assetId}>
-                        <Transformation width="800" crop="scale" />
+                      <Image width="300" className="mr-2 mb-2" publicId={assetId}>
+                        <Transformation width="800" height="600" crop="fill" />
                       </Image>
                     </div>
                   ))}
               </div>
             </div>
-            <button type="submit" className="mt-3 btn btn-primary">
-              Update form
-            </button>
+            <div className="mt-3">
+              <button type="submit" className="btn btn-primary">
+                Update form
+              </button>
+              <button
+                disabled={deleting}
+                onClick={async () => {
+                  const { loading: deletingState } = await deleteForm({
+                    variables: { id },
+                    refetchQueries: [{ query: FORMS }]
+                  });
+                  setDeleting(deletingState);
+                  push('/forms');
+                }}
+                type="button"
+                className="ml-3 btn btn-link px-0"
+              >
+                Delete
+              </button>
+            </div>
           </form>
           <Alert messages={messages} />
         </div>
@@ -123,6 +120,42 @@ const FormEdit = ({
     </Layout>
   );
 };
+
+export const FORM = gql`
+  query($id: String!) {
+    form(id: $id) {
+      id
+      name
+      logos {
+        assetId
+      }
+    }
+  }
+`;
+
+export const UPDATE_FORM = gql`
+  mutation($input: UpdateFormInput!) {
+    updateForm(input: $input) {
+      id
+      name
+      logos {
+        assetId
+      }
+    }
+  }
+`;
+
+export const DELETE_FORM = gql`
+  mutation($id: String!) {
+    deleteForm(id: $id) {
+      id
+      name
+      logos {
+        assetId
+      }
+    }
+  }
+`;
 
 export default withRouter(FormEdit);
 
