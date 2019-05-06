@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from 'react-apollo-hooks';
 import Link from 'next/link';
-import { Image, Transformation } from 'cloudinary-react';
 import { withRouter } from 'next/router';
 import { FORMS } from '../forms';
+import Logo from '../../components/logo';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 import { useUpload } from '../../lib/use-upload';
@@ -16,16 +16,16 @@ const FormEdit = ({
     query: { id }
   }
 }) => {
+  const [name, setName] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [messages, setMessages] = useState(null);
   const {
     data: { form = {} },
     loading
   } = useQuery(FORM, { variables: { id } });
-  const [name, setName] = useState('');
-  const [deleting, setDeleting] = useState(false);
-  const [messages, setMessages] = useState(null);
   const updateForm = useMutation(UPDATE_FORM);
   const deleteForm = useMutation(DELETE_FORM);
-
+  const deleteLogo = useMutation(DELETE_LOGO);
   const { openWidget } = useUpload(async publicId => {
     try {
       await updateForm({
@@ -85,11 +85,23 @@ const FormEdit = ({
               <div className="d-flex flex-wrap">
                 {form.logos &&
                   form.logos.map(({ assetId }) => (
-                    <div key={assetId}>
-                      <Image width="300" className="mr-2 mb-2" publicId={assetId}>
-                        <Transformation width="800" height="600" crop="fill" />
-                      </Image>
-                    </div>
+                    <Logo
+                      width="300"
+                      height="225"
+                      key={assetId}
+                      assetId={assetId}
+                      onDelete={async () => {
+                        await deleteLogo({
+                          variables: { assetId },
+                          refetchQueries: [
+                            {
+                              query: FORM,
+                              variables: { id }
+                            }
+                          ]
+                        });
+                      }}
+                    />
                   ))}
               </div>
             </div>
@@ -153,6 +165,15 @@ export const DELETE_FORM = gql`
       logos {
         assetId
       }
+    }
+  }
+`;
+
+export const DELETE_LOGO = gql`
+  mutation($assetId: String!) {
+    deleteLogo(assetId: $assetId) {
+      id
+      assetId
     }
   }
 `;
