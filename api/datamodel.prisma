@@ -30,7 +30,7 @@ type Submission {
 
 type Logo {
   id: ID! @unique
-  assetId: String!
+  assetId: String! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
   form: Form @relation(name: "FormLogos")

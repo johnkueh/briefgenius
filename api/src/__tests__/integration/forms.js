@@ -33,6 +33,8 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await prisma.deleteManyUsers();
+  await prisma.deleteManyForms();
+  await prisma.deleteManyLogoes();
 });
 
 it('able to get only forms for user', async () => {
