@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import ResetPassword from '../components/reset-password';
 
@@ -56,9 +57,7 @@ const ResetPasswordPage = ({
 
             setSubmitting(false);
           } catch (error) {
-            setMessages({
-              warning: error.graphQLErrors[0].extensions.exception.errors
-            });
+            setMessages(parseError(error));
             setSubmitting(false);
           }
         }}

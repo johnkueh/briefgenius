@@ -5,10 +5,11 @@ import { useQuery, useMutation } from 'react-apollo-hooks';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { FORMS } from '../forms';
+import { parseError } from '../../lib/parse-error';
+import { useUpload } from '../../lib/use-upload';
 import Logo from '../../components/logo';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
-import { useUpload } from '../../lib/use-upload';
 
 const FormEdit = ({
   router: {
@@ -37,7 +38,7 @@ const FormEdit = ({
         }
       });
     } catch (error) {
-      setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+      setMessages(parseError(error));
     }
   });
 
@@ -68,7 +69,7 @@ const FormEdit = ({
                   }
                 });
               } catch (error) {
-                setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+                setMessages(parseError(error));
               }
             }}
           >

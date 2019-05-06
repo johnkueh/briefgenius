@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import ForgotPassword from '../components/forgot-password';
 
@@ -42,9 +43,7 @@ const ForgotPasswordPage = () => {
 
             setSubmitting(false);
           } catch (error) {
-            setMessages({
-              warning: error.graphQLErrors[0].extensions.exception.errors
-            });
+            setMessages(parseError(error));
             setSubmitting(false);
           }
         }}

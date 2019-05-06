@@ -4,6 +4,7 @@ import { useMutation } from 'react-apollo-hooks';
 import Router from 'next/router';
 import Link from 'next/link';
 import { FORMS } from '../forms';
+import { parseError } from '../../lib/parse-error';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 
@@ -47,7 +48,7 @@ const NewForm = () => {
                 });
                 Router.push('/forms');
               } catch (error) {
-                setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+                setMessages(parseError(error));
               }
             }}
           >

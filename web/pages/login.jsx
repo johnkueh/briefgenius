@@ -3,6 +3,7 @@ import Router from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
 import { AuthContext } from '../contexts/authentication';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import Login from '../components/log-in';
 
@@ -45,7 +46,7 @@ const LoginPage = () => {
 
             Router.push('/forms');
           } catch (error) {
-            setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+            setMessages(parseError(error));
             setSubmitting(false);
           }
         }}
