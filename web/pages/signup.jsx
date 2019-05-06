@@ -3,7 +3,7 @@ import Router from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
 import { AuthContext } from '../contexts/authentication';
-import { useErrorMessages } from '../lib/use-error-messages';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import Signup from '../components/sign-up';
 
@@ -20,14 +20,14 @@ const SIGNUP = gql`
 `;
 
 const SignupPage = () => {
-  const [errorMessages, setErrorMessages] = useErrorMessages(null);
+  const [messages, setMessages] = useState(null);
   const signUp = useMutation(SIGNUP);
   const { setUser, setJwt, setIsLoggedIn } = useContext(AuthContext);
 
   return (
     <Layout>
       <Signup
-        messages={errorMessages}
+        messages={messages}
         onSubmit={async ({ email, name, password }, { setSubmitting }) => {
           try {
             const {
@@ -46,7 +46,9 @@ const SignupPage = () => {
 
             Router.push('/forms');
           } catch (error) {
-            setErrorMessages(error);
+            setMessages({
+              warning: parseError(error)
+            });
             setSubmitting(false);
           }
         }}

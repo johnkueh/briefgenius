@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
-import { useErrorMessages } from '../lib/use-error-messages';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import ForgotPassword from '../components/forgot-password';
 
@@ -15,13 +15,12 @@ export const FORGOT_PASSWORD = gql`
 
 const ForgotPasswordPage = () => {
   const [messages, setMessages] = useState(null);
-  const [errorMessages, setErrorMessages] = useErrorMessages(null);
   const forgotPassword = useMutation(FORGOT_PASSWORD);
 
   return (
     <Layout>
       <ForgotPassword
-        messages={errorMessages || messages}
+        messages={messages}
         onSubmit={async (currentValues, { setSubmitting }) => {
           const { email } = currentValues;
 
@@ -44,7 +43,9 @@ const ForgotPasswordPage = () => {
 
             setSubmitting(false);
           } catch (error) {
-            setErrorMessages(error);
+            setMessages({
+              warning: parseError(error)
+            });
             setSubmitting(false);
           }
         }}

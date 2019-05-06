@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import gql from 'graphql-tag';
 import { useMutation } from 'react-apollo-hooks';
-import { useErrorMessages } from '../lib/use-error-messages';
+import { parseError } from '../lib/parse-error';
 import Layout from '../layouts/auth';
 import ResetPassword from '../components/reset-password';
 
@@ -21,7 +21,6 @@ const ResetPasswordPage = ({
   }
 }) => {
   const [messages, setMessages] = useState(null);
-  const [errorMessages, setErrorMessages] = useErrorMessages(null);
   const [token, setToken] = useState('');
   const resetPassword = useMutation(RESET_PASSWORD);
 
@@ -33,7 +32,7 @@ const ResetPasswordPage = ({
     <Layout>
       <ResetPassword
         token={token}
-        messages={errorMessages || messages}
+        messages={messages}
         onSubmit={async (currentValues, { setSubmitting }) => {
           const { password, repeatPassword, token: tokenValue } = currentValues;
 
@@ -58,7 +57,9 @@ const ResetPasswordPage = ({
 
             setSubmitting(false);
           } catch (error) {
-            setErrorMessages(error);
+            setMessages({
+              warning: parseError(error)
+            });
             setSubmitting(false);
           }
         }}
