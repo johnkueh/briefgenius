@@ -95,3 +95,46 @@ it('able to delete own logos', async () => {
     name: 'Form 1'
   });
 });
+
+it('not able to delete other forms logos', async () => {
+  await prisma.createForm({
+    name: 'Form 1',
+    user: {
+      connect: { id: user.id }
+    }
+  });
+
+  const form2 = await prisma.createForm({
+    name: 'Form 2'
+  });
+
+  await prisma.updateForm({
+    where: { id: form2.id },
+    data: {
+      logos: {
+        create: [{ assetId: 'public-id-1' }, { assetId: 'public-id-2' }, { assetId: 'public-id-3' }]
+      }
+    }
+  });
+
+  const res = await graphqlRequest({
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    },
+    variables: {
+      assetId: 'public-id-1'
+    },
+    query: `
+      mutation($assetId: String!) {
+        deleteLogo(assetId: $assetId) {
+          id
+          assetId
+        }
+      }
+  `
+  });
+
+  expect(res.errors[0].extensions.exception.errors).toEqual({
+    auth: 'Not authorised!'
+  });
+});

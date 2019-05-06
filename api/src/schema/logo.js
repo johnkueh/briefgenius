@@ -8,20 +8,20 @@ export default gql`
   }
 `;
 
-const userOwnLogo = rule()(async (parent, args, ctx, info) => {
-  const { id } = args;
+const ownLogo = rule()(async (parent, args, ctx, info) => {
+  const { assetId } = args;
   const { user, prisma } = ctx;
 
-  const forms = await prisma.logo({
-    where: {
-      id,
+  const result = await prisma.$exists.logo({
+    assetId,
+    form: {
       user: {
         id: user.id
       }
     }
   });
 
-  if (forms.length > 0) return true;
+  if (result) return true;
 
   return ValidationErrors({
     auth: 'Not authorised!'
@@ -30,6 +30,6 @@ const userOwnLogo = rule()(async (parent, args, ctx, info) => {
 
 export const permissions = shield({
   Mutation: {
-    // deleteLogo: userOwnLogo
+    deleteLogo: ownLogo
   }
 });

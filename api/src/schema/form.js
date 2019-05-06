@@ -53,16 +53,14 @@ const userOwnForm = rule()(async (parent, args, ctx, info) => {
   const { id } = args;
   const { user, prisma } = ctx;
 
-  const forms = await prisma.forms({
-    where: {
-      id,
-      user: {
-        id: user.id
-      }
+  const exists = await prisma.$exists.form({
+    id,
+    user: {
+      id: user.id
     }
   });
 
-  if (forms.length > 0) return true;
+  if (exists) return true;
 
   return ValidationErrors({
     auth: 'Not authorised!'
