@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
-import { useQuery, useMutation } from 'react-apollo-hooks';
 import Link from 'next/link';
+import { Formik, Form, Field } from 'formik';
+import { useQuery, useMutation } from 'react-apollo-hooks';
 import { withRouter } from 'next/router';
 import { FORMS } from '../forms';
 import { parseError } from '../../lib/parse-error';
 import { useUpload } from '../../lib/use-upload';
+import Button from '../../components/button';
 import Logo from '../../components/logo';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
@@ -17,11 +19,10 @@ const FormEdit = ({
     query: { id }
   }
 }) => {
-  const [name, setName] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [messages, setMessages] = useState(null);
   const {
-    data: { form = {} },
+    data: { form },
     loading
   } = useQuery(FORM, { variables: { id } });
   const updateForm = useMutation(UPDATE_FORM);
@@ -42,9 +43,7 @@ const FormEdit = ({
     }
   });
 
-  useEffect(() => {
-    !loading && setName(form.name);
-  }, [loading, form.name]);
+  if (!form) return null;
 
   return (
     <Layout>
@@ -56,77 +55,80 @@ const FormEdit = ({
             </Link>
           </div>
           <h2 className="mb-3">Edit form</h2>
-          <form
-            onSubmit={async e => {
-              e.preventDefault();
+          <Formik
+            initialValues={{ id: form.id, name: form.name }}
+            onSubmit={async (currentValues, { setSubmitting }) => {
               try {
                 await updateForm({
                   variables: {
-                    input: {
-                      id,
-                      name
-                    }
+                    input: currentValues
                   }
                 });
+                setSubmitting(false);
               } catch (error) {
                 setMessages(parseError(error));
               }
             }}
           >
-            <input
-              value={name}
-              onChange={e => setName(e.target.value)}
-              type="text"
-              className="form-control mb-3"
-            />
-            <div>
-              <button className="px-0 btn btn-link" type="button" onClick={openWidget}>
-                Upload logos
-              </button>
-              <div className="d-flex flex-wrap">
-                {form.logos &&
-                  form.logos.map(({ assetId }) => (
-                    <Logo
-                      width="300"
-                      height="225"
-                      key={assetId}
-                      assetId={assetId}
-                      onDelete={async () => {
-                        await deleteLogo({
-                          variables: { assetId },
-                          refetchQueries: [
-                            {
-                              query: FORM,
-                              variables: { id }
-                            }
-                          ]
-                        });
-                      }}
-                    />
-                  ))}
-              </div>
-            </div>
-            <div className="mt-3">
-              <button type="submit" className="btn btn-primary">
-                Update form
-              </button>
-              <button
-                disabled={deleting}
-                onClick={async () => {
-                  const { loading: deletingState } = await deleteForm({
-                    variables: { id },
-                    refetchQueries: [{ query: FORMS }]
-                  });
-                  setDeleting(deletingState);
-                  push('/forms');
-                }}
-                type="button"
-                className="ml-3 btn btn-link px-0"
-              >
-                Delete
-              </button>
-            </div>
-          </form>
+            {({ isSubmitting }) => (
+              <Form>
+                <Field name="name" className="form-control mb-3" type="text" />
+                <div>
+                  <button className="px-0 btn btn-link" type="button" onClick={openWidget}>
+                    Upload logos
+                  </button>
+                  <div className="d-flex flex-wrap">
+                    {form.logos &&
+                      form.logos.map(({ assetId }) => (
+                        <Logo
+                          width="300"
+                          height="225"
+                          key={assetId}
+                          assetId={assetId}
+                          onDelete={async () => {
+                            await deleteLogo({
+                              variables: { assetId },
+                              refetchQueries: [
+                                {
+                                  query: FORM,
+                                  variables: { id }
+                                }
+                              ]
+                            });
+                          }}
+                        />
+                      ))}
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Button
+                    loading={isSubmitting}
+                    loadingText="Updating..."
+                    className="btn btn-primary"
+                    type="submit"
+                  >
+                    Update form
+                  </Button>
+                  <Button
+                    loading={deleting}
+                    loadingText="Deleting..."
+                    className="btn btn-link pl-3"
+                    type="button"
+                    onClick={async () => {
+                      const { loading: deletingState } = await deleteForm({
+                        variables: { id },
+                        refetchQueries: [{ query: FORMS }]
+                      });
+                      setDeleting(deletingState);
+                      push('/forms');
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
           <Alert messages={messages} />
         </div>
       </div>
