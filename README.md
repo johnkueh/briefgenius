@@ -9,6 +9,7 @@ Tech stack - API
 3. Prisma.io
 4. Jest
 5. Yup for validations
+6. graphql-shield for permissions
 
 Tech stack - Client
 
@@ -27,3 +28,4 @@ Features:
 Services
 
 1. Emails - Sendgrid
+2. Images - Cloudinary
