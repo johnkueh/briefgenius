@@ -12,7 +12,7 @@ const ownLogo = rule()(async (parent, args, ctx, info) => {
   const { assetId } = args;
   const { user, prisma } = ctx;
 
-  const result = await prisma.$exists.logo({
+  const exists = await prisma.$exists.logo({
     assetId,
     form: {
       user: {
@@ -21,7 +21,7 @@ const ownLogo = rule()(async (parent, args, ctx, info) => {
     }
   });
 
-  if (result) return true;
+  if (exists) return true;
 
   return ValidationErrors({
     auth: 'Not authorised!'
