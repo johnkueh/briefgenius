@@ -4,7 +4,7 @@ import { useMutation } from 'react-apollo-hooks';
 import Router from 'next/router';
 import Link from 'next/link';
 import { FORMS } from '../forms';
-import { parseError } from '../../lib/parse-error';
+import { useErrorMessages } from '../../lib/use-error-messages';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 
@@ -19,7 +19,7 @@ export const CREATE_FORM = gql`
 
 const NewForm = () => {
   const [name, setName] = useState('');
-  const [messages, setMessages] = useState(null);
+  const [errorMessages, setErrorMessages] = useErrorMessages(null);
   const create = useMutation(CREATE_FORM);
 
   return (
@@ -32,7 +32,7 @@ const NewForm = () => {
             </Link>
           </div>
           <h2 className="mb-3">Add a new form</h2>
-          <Alert messages={messages} />
+          <Alert messages={errorMessages} />
           <p className="text-muted">What should we call this form?</p>
           <form
             onSubmit={async e => {
@@ -48,7 +48,7 @@ const NewForm = () => {
                 });
                 Router.push('/forms');
               } catch (error) {
-                setMessages(parseError(error));
+                setErrorMessages(error);
               }
             }}
           >

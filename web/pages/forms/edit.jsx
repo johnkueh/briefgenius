@@ -6,7 +6,7 @@ import { Formik, Form, Field } from 'formik';
 import { useQuery, useMutation } from 'react-apollo-hooks';
 import { withRouter } from 'next/router';
 import { FORMS } from '../forms';
-import { parseError } from '../../lib/parse-error';
+import { useErrorMessages } from '../../lib/use-error-messages';
 import { useUpload } from '../../lib/use-upload';
 import Button from '../../components/button';
 import Logo from '../../components/logo';
@@ -21,6 +21,7 @@ const FormEdit = ({
 }) => {
   const [deleting, setDeleting] = useState(false);
   const [messages, setMessages] = useState(null);
+  const [errorMessages, setErrorMessages] = useErrorMessages(null);
   const {
     data: { form }
   } = useQuery(FORM, { variables: { id } });
@@ -44,20 +45,32 @@ const FormEdit = ({
           <Formik
             initialValues={{ id: form.id, name: form.name }}
             onSubmit={async (currentValues, { setSubmitting }) => {
+              setMessages(null);
+              setErrorMessages(null);
               try {
                 await updateForm({
                   variables: {
                     input: currentValues
                   }
                 });
+                setMessages({
+                  success: {
+                    name: 'Successfully updated form.'
+                  }
+                });
+                setTimeout(() => {
+                  setMessages(null);
+                }, 3000);
                 setSubmitting(false);
               } catch (error) {
-                setMessages(parseError(error));
+                setErrorMessages(error);
+                setSubmitting(false);
               }
             }}
           >
             {({ isSubmitting }) => (
               <Form>
+                <Alert messages={errorMessages || messages} />
                 <Field name="name" className="form-control mb-3" type="text" />
                 <div>
                   <button
@@ -76,7 +89,7 @@ const FormEdit = ({
                               }
                             });
                           } catch (error) {
-                            setMessages(parseError(error));
+                            setErrorMessages(error);
                           }
                         }
                       });
@@ -136,7 +149,6 @@ const FormEdit = ({
               </Form>
             )}
           </Formik>
-          <Alert messages={messages} />
         </div>
       </div>
     </Layout>
