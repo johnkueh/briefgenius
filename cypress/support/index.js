@@ -1,20 +1,17 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+import './commands';
 
-// Import commands.js using ES2015 syntax:
-import './commands'
+beforeEach(() => {
+  cy.task('prisma', {
+    deleteManyUsers: {
+      email_in: ['test+user@example.com']
+    }
+  });
+  cy.visit('/signup');
+  cy.getByPlaceholderText('Name').type('Test user');
+  cy.getByPlaceholderText('Email address').type('test+user@example.com');
+  cy.getByPlaceholderText('Password').type('testpassword');
+  cy.getByText('Sign up').click();
+  cy.url().should('include', '/forms');
+});
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+beforeEach(() => {});

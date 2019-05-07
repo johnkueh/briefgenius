@@ -23,5 +23,9 @@ const Forms = ({ forms }) => {
 export default Forms;
 
 Forms.propTypes = {
-  forms: PropTypes.arrayOf(PropTypes.object).isRequired
+  forms: PropTypes.arrayOf(PropTypes.object)
+};
+
+Forms.defaultProps = {
+  forms: []
 };

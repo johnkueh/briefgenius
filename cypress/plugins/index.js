@@ -1,3 +1,4 @@
+const { Prisma } = require('../../api/generated/prisma-client');
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
 //
@@ -12,6 +13,15 @@
 // the project's config changing)
 
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
+  on('task', {
+    prisma(params) {
+      const prisma = new Prisma({
+        endpoint: config.env.prismaEndpoint
+      });
+      const method = Object.keys(params)[0];
+      const query = Object.values(params)[0];
+
+      return prisma[method](query);
+    }
+  });
+};

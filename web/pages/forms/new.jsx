@@ -55,12 +55,13 @@ const NewForm = () => {
             }}
           >
             <input
+              data-testid="new-form-input-name"
               value={name}
               onChange={e => setName(e.target.value)}
               type="text"
               className="form-control mb-3"
             />
-            <button type="submit" className="mt-3 btn btn-primary">
+            <button data-testid="new-form-submit" type="submit" className="mt-3 btn btn-primary">
               Create form
             </button>
           </form>
