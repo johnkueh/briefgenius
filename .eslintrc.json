@@ -1,6 +1,6 @@
 {
   "extends": ["airbnb", "prettier", "react-app", "plugin:prettier/recommended"],
-  "plugins": ["prettier", "react-hooks"],
+  "plugins": ["prettier", "react-hooks", "cypress"],
   "rules": {
     "prettier/prettier": ["error"],
     "jsx-a11y/href-no-hash": [0],
@@ -8,5 +8,8 @@
     "no-param-reassign": 0,
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
+  },
+  "env": {
+    "cypress/globals": true
   }
 }
