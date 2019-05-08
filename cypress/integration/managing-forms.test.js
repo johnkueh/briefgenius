@@ -1,8 +1,14 @@
 import 'cypress-testing-library/add-commands';
 
-beforeEach(() => {});
-
 describe('creating forms', () => {
+  beforeEach(() => {
+    cy.createUserAndLogin({
+      email: 'test+user@example.com',
+      password: 'testpassword',
+      name: 'Test user'
+    });
+  });
+
   it('fails to create form without a name', () => {
     cy.visit('/forms/new');
     cy.getByText('Create form').click();
