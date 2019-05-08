@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Link from 'next/link';
 
 const Forms = ({ forms }) => {
-  if (forms.length === 0) return <div>No forms added yet...</div>;
+  if (forms.length === 0) return <div data-testid="forms-blank">No forms added yet...</div>;
 
   return (
     <div className="border-top my-3">

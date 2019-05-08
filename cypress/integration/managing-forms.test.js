@@ -52,19 +52,19 @@ describe('editing forms', () => {
   it('fails to update form without a name', () => {
     cy.visit('/forms');
     cy.getByText('Test form').click();
-    cy.getByTestId('form-input-name').clear();
+    cy.get('[data-testid="form-input-name"]').clear();
     cy.getByText('Update form').click();
     cy.getByText('Name must be at least 1 characters').should('be.visible');
   });
 
-  it('successfully updates and then deletes form', () => {
+  it.only('successfully updates and then deletes form', () => {
     cy.visit('/forms');
     cy.getByText('Test form').click();
-    cy.getByTestId('form-input-name').type(' additional');
+    cy.get('[data-testid="form-input-name"]').type(' additional');
     cy.getByText('Update form').click();
     cy.getByText('Successfully updated form.').should('be.visible');
     cy.getByText('Delete').click();
     cy.url().should('include', '/forms');
-    cy.getByText('No forms added yet...').should('be.visible');
+    cy.get('[data-testid="forms-blank"]').should('not.exist');
   });
 });
