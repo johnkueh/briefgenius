@@ -57,7 +57,7 @@ describe('editing forms', () => {
     cy.getByText('Name must be at least 1 characters').should('be.visible');
   });
 
-  it.only('successfully updates and then deletes form', () => {
+  it('successfully updates and then deletes form', () => {
     cy.visit('/forms');
     cy.getByText('Test form').click();
     cy.get('[data-testid="form-input-name"]').type(' additional');

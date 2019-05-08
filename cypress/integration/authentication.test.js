@@ -40,7 +40,11 @@ describe('logging in success', () => {
 
 describe('signup errors', () => {
   it('missing fields', () => {
-    cy.deleteUsers(['email@weirdc.com']);
+    cy.prisma({
+      deleteManyUsers: {
+        email_in: ['email@weirdc.com']
+      }
+    });
     cy.visit('/signup');
     cy.getByText('Sign up').click();
     cy.getByText('Name must be at least 1 characters').should('be.visible');
@@ -67,7 +71,11 @@ describe('signup errors', () => {
     cy.getByText('Sign up').click();
     cy.getByText('Email is already taken').should('be.visible');
 
-    cy.deleteUsers(['existing+user@example.com']);
+    cy.prisma({
+      deleteManyUsers: {
+        email_in: ['existing+user@example.com']
+      }
+    });
   });
 });
 
@@ -80,6 +88,10 @@ describe('signup success', () => {
     cy.getByText('Sign up').click();
     cy.url().should('include', '/forms');
 
-    cy.deleteUsers(['new+user@example.com']);
+    cy.prisma({
+      deleteManyUsers: {
+        email_in: ['new+user@example.com']
+      }
+    });
   });
 });

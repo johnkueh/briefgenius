@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import Link from 'next/link';
@@ -7,9 +7,8 @@ import { useQuery, useMutation } from 'react-apollo-hooks';
 import { withRouter } from 'next/router';
 import { FORMS } from '../forms';
 import { parseError } from '../../lib/parse-error';
-import { useUpload } from '../../lib/use-upload';
 import Button from '../../components/button';
-import Logo from '../../components/logo';
+import FormLogos from '../../components/form-logos';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 
@@ -21,15 +20,17 @@ const FormEdit = ({
 }) => {
   const [deleting, setDeleting] = useState(false);
   const [messages, setMessages] = useState(null);
-  const {
-    data: { form }
-  } = useQuery(FORM, { variables: { id } });
   const updateForm = useMutation(UPDATE_FORM);
   const deleteForm = useMutation(DELETE_FORM);
-  const deleteLogo = useMutation(DELETE_LOGO);
-  const { openWidget } = useUpload();
+  const {
+    data: { form = {} }
+  } = useQuery(FORM, { variables: { id } });
+  const renderLogos = useMemo(() => <FormLogos id={form.id} logos={form.logos} />, [
+    form.id,
+    form.logos
+  ]);
 
-  if (!form) return null;
+  if (!form.id) return null;
 
   return (
     <Layout>
@@ -74,56 +75,7 @@ const FormEdit = ({
                   className="form-control mb-3"
                   type="text"
                 />
-                <div>
-                  <button
-                    className="px-0 btn btn-link"
-                    type="button"
-                    onClick={() => {
-                      openWidget({
-                        onUpload: async publicId => {
-                          try {
-                            await updateForm({
-                              variables: {
-                                input: {
-                                  id,
-                                  logos: [publicId]
-                                }
-                              }
-                            });
-                          } catch (error) {
-                            setMessages({
-                              warning: parseError(error)
-                            });
-                          }
-                        }
-                      });
-                    }}
-                  >
-                    Upload logos
-                  </button>
-                  <div className="d-flex flex-wrap">
-                    {form.logos &&
-                      form.logos.map(({ assetId }) => (
-                        <Logo
-                          width="300"
-                          height="225"
-                          key={assetId}
-                          assetId={assetId}
-                          onDelete={async () => {
-                            await deleteLogo({
-                              variables: { assetId },
-                              refetchQueries: [
-                                {
-                                  query: FORM,
-                                  variables: { id }
-                                }
-                              ]
-                            });
-                          }}
-                        />
-                      ))}
-                  </div>
-                </div>
+                {renderLogos}
                 <div className="mt-3">
                   <Button
                     loading={isSubmitting}
