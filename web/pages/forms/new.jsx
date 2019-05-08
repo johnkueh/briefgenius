@@ -4,6 +4,7 @@ import { useMutation } from 'react-apollo-hooks';
 import Router from 'next/router';
 import Link from 'next/link';
 import { FORMS } from '../forms';
+import { parseError } from '../../lib/parse-error';
 import Alert from '../../components/alert-messages';
 import Layout from '../../layouts/logged-in';
 
@@ -47,17 +48,20 @@ const NewForm = () => {
                 });
                 Router.push('/forms');
               } catch (error) {
-                setMessages({ warning: error.graphQLErrors[0].extensions.exception.errors });
+                setMessages({
+                  warning: parseError(error)
+                });
               }
             }}
           >
             <input
+              data-testid="new-form-input-name"
               value={name}
               onChange={e => setName(e.target.value)}
               type="text"
               className="form-control mb-3"
             />
-            <button type="submit" className="mt-3 btn btn-primary">
+            <button data-testid="new-form-submit" type="submit" className="mt-3 btn btn-primary">
               Create form
             </button>
           </form>
