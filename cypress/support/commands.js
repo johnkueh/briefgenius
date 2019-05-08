@@ -38,6 +38,10 @@ const SIGNUP = gql`
   }
 `;
 
+Cypress.Commands.add('prisma', params => {
+  cy.task('prisma', params);
+});
+
 Cypress.Commands.add('deleteUsers', emails => {
   cy.task('prisma', {
     deleteManyUsers: {
