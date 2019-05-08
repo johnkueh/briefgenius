@@ -21,3 +21,50 @@ describe('creating forms', () => {
     cy.getByTestId('new-form-submit').click();
   });
 });
+
+describe('editing forms', () => {
+  beforeEach(() => {
+    cy.createUserAndLogin({
+      email: 'test+user@example.com',
+      password: 'testpassword',
+      name: 'Test user'
+    });
+
+    cy.prisma({
+      deleteManyForms: {
+        id_contains: 'test'
+      }
+    });
+
+    cy.prisma({
+      createForm: {
+        id: 'test-form',
+        name: 'Test form',
+        user: {
+          connect: {
+            email: 'test+user@example.com'
+          }
+        }
+      }
+    });
+  });
+
+  it('fails to update form without a name', () => {
+    cy.visit('/forms');
+    cy.getByText('Test form').click();
+    cy.get('[data-testid="form-input-name"]').clear();
+    cy.getByText('Update form').click();
+    cy.getByText('Name must be at least 1 characters').should('be.visible');
+  });
+
+  it.only('successfully updates and then deletes form', () => {
+    cy.visit('/forms');
+    cy.getByText('Test form').click();
+    cy.get('[data-testid="form-input-name"]').type(' additional');
+    cy.getByText('Update form').click();
+    cy.getByText('Successfully updated form.').should('be.visible');
+    cy.getByText('Delete').click();
+    cy.url().should('include', '/forms');
+    cy.get('[data-testid="forms-blank"]').should('not.exist');
+  });
+});

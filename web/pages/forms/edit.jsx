@@ -68,7 +68,12 @@ const FormEdit = ({
             {({ isSubmitting }) => (
               <Form>
                 <Alert messages={messages} />
-                <Field name="name" className="form-control mb-3" type="text" />
+                <Field
+                  data-testid="form-input-name"
+                  name="name"
+                  className="form-control mb-3"
+                  type="text"
+                />
                 <div>
                   <button
                     className="px-0 btn btn-link"
