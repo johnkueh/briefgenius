@@ -9,8 +9,8 @@ const Forms = ({ forms }) => {
     <div className="border-top my-3">
       {forms.map(({ id, name }) => (
         <div className="border-bottom py-2" key={id}>
-          <Link href={`/forms/edit?id=${id}`}>
-            <a href={`/forms/edit?id=${id}`} key={id}>
+          <Link href={`/form?id=${id}`}>
+            <a href={`/form?id=${id}`} key={id}>
               {name}
             </a>
           </Link>

@@ -1,15 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
-import { useMutation } from 'react-apollo-hooks';
+import { useQuery, useMutation } from 'react-apollo-hooks';
+import { withRouter } from 'next/router';
 import Logos from './logos';
 
-const FormLogos = ({ id, logos }) => {
+const FormLogos = ({
+  router: {
+    query: { id }
+  }
+}) => {
   const updateForm = useMutation(UPDATE_FORM);
   const deleteLogo = useMutation(DELETE_LOGO);
+  const {
+    data: { form = {} }
+  } = useQuery(FORM, { variables: { id } });
+
+  if (!form.id) return null;
+
   return (
     <Logos
-      logos={logos}
+      logos={form.logos}
       onUpload={async publicId => {
         await updateForm({
           variables: {
@@ -39,7 +50,6 @@ export const FORM = gql`
   query($id: String!) {
     form(id: $id) {
       id
-      name
       logos {
         assetId
       }
@@ -68,14 +78,8 @@ export const DELETE_LOGO = gql`
   }
 `;
 
-export default FormLogos;
+export default withRouter(FormLogos);
 
 FormLogos.propTypes = {
-  id: PropTypes.string,
-  logos: PropTypes.arrayOf(PropTypes.object)
-};
-
-FormLogos.defaultProps = {
-  id: null,
-  logos: []
+  router: PropTypes.objectOf(PropTypes.any).isRequired
 };

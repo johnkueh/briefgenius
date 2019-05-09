@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import Link from 'next/link';
@@ -25,10 +25,6 @@ const FormEdit = ({
   const {
     data: { form = {} }
   } = useQuery(FORM, { variables: { id } });
-  const renderLogos = useMemo(() => <FormLogos id={form.id} logos={form.logos} />, [
-    form.id,
-    form.logos
-  ]);
 
   if (!form.id) return null;
 
@@ -37,11 +33,30 @@ const FormEdit = ({
       <div className="row">
         <div className="col-md-12">
           <div className="mb-3">
-            <Link href="/forms">
-              <a href="/forms">Back to all forms</a>
-            </Link>
+            <div>
+              <Link href="/forms">
+                <a href="/forms">Back to all forms</a>
+              </Link>
+            </div>
+            <Button
+              data-testid="delete-form"
+              loading={deleting}
+              loadingText="Deleting..."
+              className="btn btn-link p-0"
+              type="button"
+              onClick={async () => {
+                const { loading: deletingState } = await deleteForm({
+                  variables: { id },
+                  refetchQueries: [{ query: FORMS }]
+                });
+                setDeleting(deletingState);
+                push('/forms');
+              }}
+            >
+              Delete this form
+            </Button>
           </div>
-          <h2 className="mb-3">Edit form</h2>
+          <h2 className="my-3">Edit form</h2>
           <Formik
             initialValues={{ id: form.id, name: form.name }}
             onSubmit={async (currentValues, { setSubmitting }) => {
@@ -52,12 +67,7 @@ const FormEdit = ({
                     input: currentValues
                   }
                 });
-                setMessages({
-                  success: {
-                    name: 'Successfully updated form.'
-                  }
-                });
-                setSubmitting(false);
+                push(`/form?id=${form.id}`);
               } catch (error) {
                 setMessages({
                   warning: parseError(error)
@@ -67,44 +77,31 @@ const FormEdit = ({
             }}
           >
             {({ isSubmitting }) => (
-              <Form>
+              <Form className="mb-3">
                 <Alert messages={messages} />
+                <label htmlFor="nameInput">Name</label>
                 <Field
+                  id="nameInput"
                   data-testid="form-input-name"
                   name="name"
                   className="form-control mb-3"
                   type="text"
                 />
-                {renderLogos}
                 <div className="mt-3">
                   <Button
+                    data-testid="save-form"
                     loading={isSubmitting}
                     loadingText="Updating..."
                     className="btn btn-primary"
                     type="submit"
                   >
-                    Update form
-                  </Button>
-                  <Button
-                    loading={deleting}
-                    loadingText="Deleting..."
-                    className="btn btn-link pl-3"
-                    type="button"
-                    onClick={async () => {
-                      const { loading: deletingState } = await deleteForm({
-                        variables: { id },
-                        refetchQueries: [{ query: FORMS }]
-                      });
-                      setDeleting(deletingState);
-                      push('/forms');
-                    }}
-                  >
-                    Delete
+                    Save
                   </Button>
                 </div>
               </Form>
             )}
           </Formik>
+          <FormLogos />
         </div>
       </div>
     </Layout>
